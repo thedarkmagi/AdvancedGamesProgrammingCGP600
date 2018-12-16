@@ -21,6 +21,17 @@ GameManager::GameManager(ID3D11Device * device, ID3D11DeviceContext * deviceCont
 
 GameManager::~GameManager()
 {
+	if (g_2DText) delete(g_2DText);
+
+	if (pCamera) delete(pCamera);
+
+	if (g_pInputLayout) g_pInputLayout->Release();
+	if (g_pVertexShader) g_pVertexShader->Release();
+	if (g_pPixelShader) g_pPixelShader->Release();
+	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
+	if (g_pSwapChain) g_pSwapChain->Release();
+	if (m_pImmediateContext) m_pImmediateContext->Release();
+	if (m_pD3DDevice) m_pD3DDevice->Release();
 }
 
 void GameManager::RenderFrame(void)
@@ -62,7 +73,7 @@ void GameManager::RenderFrame(void)
 
 
 
-	//g_2DText->AddText("some Text", -1.0, +1.0, 0.2);
+	g_2DText->AddText("some Text", -1.0, +1.0, 0.2);
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 	m_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
@@ -127,7 +138,7 @@ void GameManager::RenderFrame(void)
 	g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	g_pGameObject->update(&view2, &projection2);
 	//render text
-	//g_2DText->RenderText();
+	g_2DText->RenderText();
 	// Display what has just been rendered
 	g_pSwapChain->Present(0, 0);
 }
@@ -189,6 +200,9 @@ HRESULT GameManager::InitialiseGraphics(void)
 	{
 		return hr;
 	}
+
+	g_2DText = new Text2D("assets/font1.bmp", m_pD3DDevice, m_pImmediateContext);
+
 	g_pModel->SetZPos(10.0f);
 	g_pModel->SetXPos(10.0f);
 

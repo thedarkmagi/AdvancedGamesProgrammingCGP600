@@ -34,45 +34,6 @@ using namespace std;
 
 	//tutorial 2 ex 1 
 	ID3D11RenderTargetView* g_pBackBufferRTView = NULL;
-	//tutorial 3 ex 1
-	ID3D11Buffer*		g_pVertexBuffer;
-	ID3D11VertexShader*	g_pVertexShader;
-	ID3D11PixelShader*	g_pPixelShader;
-	ID3D11InputLayout*	g_pInputLayout;
-	
-	//tutorial 8 
-	ID3D11ShaderResourceView* g_pTexture0;
-	ID3D11SamplerState* g_pSampler0;
-	//8 ex2
-	Text2D* g_2DText;
-
-	//9 ex1 
-	XMVECTOR g_directional_light_shines_from;
-	XMVECTOR g_directional_light_colour;
-	XMVECTOR g_ambient_light_colour;
-
-	//10 
-	ObjFileModel *pObject;
-
-	Model *g_pModel;
-	Model *g_pModel2;
-	Model *g_pModel3;
-	input *g_pInput;
-	skybox *g_pSkybox;
-	GameObject *g_pGameObject;
-	//XMVECTOR g_
-	float g_lightX =1.5f;
-	float g_DirectionalColours;
-	//Define vertex structure
-
-
-
-
-	//const int constBufferByteWidth = 128; // must be a multiple of 16
-	//float redAmount; // for changing red input
-	//float scaleAmout;
-	//float degrees =15.0;
-	
 	//zBuffer
 	ID3D11DepthStencilView* g_pZBuffer;
 
@@ -116,13 +77,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DXTRACE_MSG("Failed to Initialise Graphics");
 		return 0;
 	}
-	//if (FAILED(InitialiseGraphics()))
-	//{
-	//	DXTRACE_MSG("Failed to Initialise Graphics");
-	//	return 0;
-	//}
-	g_pInput = new input(&g_hInst, &g_hWnd);
-	g_pInput->initialise();
+
 
 #pragma region main message loop
 
@@ -139,7 +94,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		else
 		{
 			g_pGameManger->RenderFrame();
-			//RenderFrame();
 		}
 	}
 
@@ -325,7 +279,7 @@ HRESULT InitialiseD3D()
 
 	g_pImmediateContext->RSSetViewports(1, &viewport);
 
-	g_2DText = new Text2D("assets/font1.bmp", g_pD3DDevice, g_pImmediateContext);
+	
 
 	
 	/*pObject = new ObjFileModel((char*)"assets/Sphere.obj", g_pD3DDevice, g_pImmediateContext);
@@ -338,212 +292,12 @@ HRESULT InitialiseD3D()
 //////////////////////////////////////////////////////////////////////////////////////
 void ShutdownD3D()
 {
-	if (pObject) delete pObject;
-	if (g_2DText) delete(g_2DText);
-	if (g_pTexture0) g_pTexture0->Release();
-	if (g_pSampler0) g_pSampler0->Release();
-	//tutorial 4 
-	if (pCamera) delete(pCamera);
-
-
-	if (g_pVertexBuffer) g_pVertexBuffer->Release();
-	if (g_pInputLayout) g_pInputLayout->Release();
-	if (g_pVertexShader) g_pVertexShader->Release();
-	if (g_pPixelShader) g_pPixelShader->Release();
+	if (g_pGameManger) delete g_pGameManger;
 	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
 	if (g_pSwapChain) g_pSwapChain->Release();
 	if (g_pImmediateContext) g_pImmediateContext->Release();
 	if (g_pD3DDevice) g_pD3DDevice->Release();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-//Init graphics - Tutorial 03
-/////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT InitialiseGraphics()
-{
-	HRESULT hr = S_OK;
 
-	g_pModel = new Model(g_pD3DDevice, g_pImmediateContext);
-	hr =  g_pModel->LoadObjModel((char*)"assets/Sphere.obj");
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
-	g_pModel2 = new Model(g_pD3DDevice, g_pImmediateContext);
-	hr = g_pModel2->LoadObjModel((char*)"assets/plane.obj");
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
-	g_pModel3 = new Model(g_pD3DDevice, g_pImmediateContext);
-	hr = g_pModel3->LoadObjModel((char*)"assets/PointySphere.obj");
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
-
-	pCamera = new camera(0.0, 0.0, -0.5, 0.0);
-	g_pSkybox = new skybox(g_pD3DDevice, g_pImmediateContext, pCamera);
-	hr = g_pSkybox->InitialiseGraphics();
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
-
-	g_pGameObject = new GameObject(g_pD3DDevice, g_pImmediateContext);
-	hr = g_pGameObject->CreateModel((char*)"assets/teapot.obj", (char*)"assets/texture.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-	hr = g_pModel->AddTexture((char*)"assets/texture.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	hr = g_pModel2->AddTexture((char*)"assets/texture.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	hr = g_pModel3->AddTexture((char*)"assets/texture2.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	hr = g_pSkybox->AddTexture((char*)"assets/DaylightSkybox.dds");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	g_pModel->SetZPos(10.0f);
-	g_pModel->SetXPos(10.0f);
-
-	g_pModel2->SetXPos(0.0f);
-	g_pModel2->SetYPos(-10.0f);
-	g_pModel2->SetZPos(0.0f);
-	g_pModel2->SetScale(100.0f);
-
-	g_pModel3->SetXPos(-10.0f);
-	//g_pModel3->SetYPos(4.0f);
-	g_pModel2->SetZPos(10.0f);
-	g_pModel3->SetZPos(100.0f);
-	g_pModel3->SetScale(1.0f);
-
-	pCamera->rotateInX(3);
-	return S_OK;
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// Render frame
-void RenderFrame(void)
-{
-	g_pInput->ReadInputStates();
-
-	if (g_pInput->IsKeyPressed(DIK_ESCAPE))
-	{
-		DestroyWindow(g_hWnd);
-	}
-	if (g_pInput->IsKeyPressed(DIK_W))
-	{
-		pCamera->forward(0.002f);
-	}
-	if (g_pInput->IsKeyPressed(DIK_S))
-	{
-		pCamera->forward(-0.002f);
-	}
-	if (g_pInput->IsKeyPressed(DIK_A))
-	{
-		pCamera->strafe(-0.002f);
-	}
-	if (g_pInput->IsKeyPressed(DIK_D))
-	{
-		pCamera->strafe(0.002f);
-	}
-	pCamera->rotate(g_pInput->GetMouseX());
-	pCamera->rotateInX(g_pInput->GetMouseY());
-	
-	/*if (g_pInput->IsMouseButtonPressed(0))
-	{
-		pCamera->moveUp(10.0f);
-	}
-	if (g_pInput->IsMouseButtonPressed(1))
-	{
-		pCamera->moveUp(-10.0f);
-	}*/
-	
-
-	
-
-	g_2DText->AddText("some Text", -1.0, +1.0, 0.2);
-	// Clear the back buffer - choose a colour you like
-	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
-	g_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
-
-	g_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	XMMATRIX projection2, view2;
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
-	view2 = pCamera->GetViewMatix();
-	g_pSkybox->Draw(&view2, &projection2);
-	//Some things I need to work out
-	g_pImmediateContext->VSSetShader(g_pVertexShader, 0, 0);
-	g_pImmediateContext->PSSetShader(g_pPixelShader, 0, 0);
-	g_pImmediateContext->IASetInputLayout(g_pInputLayout);
-
-	//lighting
-	g_directional_light_shines_from = XMVectorSet(g_lightX, 0.0f, -1.0f, 0.0f);
-	g_directional_light_colour = XMVectorSet(g_DirectionalColours, g_DirectionalColours, g_DirectionalColours, 1.0f);//WHITE??? 
-	g_ambient_light_colour = XMVectorSet(1.1f, 1.1f, 1.1f, 1.0f);//dark grey - always use a small value for ambient lighting
-	
-	
-	g_pModel->setdirectionalLightColour(&g_directional_light_colour);
-	g_pModel->setDirectionLightVector(&g_directional_light_shines_from);
-	g_pModel->setAmbientLightColour(&g_ambient_light_colour);
-
-	//g_pModel->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	g_pModel->lookAt_XZ(g_pModel3->GetXPos(), g_pModel3->GetZPos());
-	//g_pModel->moveForward(0.001f);
-	
-	if (g_pModel->CheckCollision(g_pModel3))
-	{
-		DebugBreak;
-		g_pModel->moveForward(-0.001f);
-	}
-	g_pModel->Draw(&view2,&projection2);
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
-	view2 = pCamera->GetViewMatix();
-	g_pModel2->setdirectionalLightColour(&g_directional_light_colour);
-	g_pModel2->setDirectionLightVector(&g_directional_light_shines_from);
-	g_pModel2->setAmbientLightColour(&g_ambient_light_colour);
-
-	g_pModel2->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	g_pModel->moveForward(0.001f);
-	g_pModel2->Draw(&view2, &projection2);
-	
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
-	view2 = pCamera->GetViewMatix();
-	g_pModel3->setdirectionalLightColour(&g_directional_light_colour);
-	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
-	g_pModel3->setAmbientLightColour(&g_ambient_light_colour);
-
-	g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
-	g_pModel3->moveForward(0.001f);
-
-	if (g_pModel3->CheckCollision(g_pModel))
-	{
-		DebugBreak;
-		g_pModel3->moveForward(-0.001f);
-
-	}
-	g_pModel3->Draw(&view2, &projection2);
-	g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
-	g_pGameObject->update(&view2, &projection2);
-	//render text
-	g_2DText->RenderText();	
-	// Display what has just been rendered
-	g_pSwapChain->Present(0, 0);
-}
 
