@@ -9,6 +9,7 @@
 #define _XM_NO_INTRINSICS_
 #define XM_NO_ALIGNMENT
 #include <xnamath.h>
+#include "GameManager.h"
 
 #include "camera.h"
 #include "text2D.h"
@@ -16,6 +17,7 @@
 #include "Model.h"
 #include "input.h"
 #include "skybox.h"
+#include "GameObject.h"
 using namespace std;
 #pragma region Globals
 	// globals //
@@ -23,7 +25,7 @@ using namespace std;
 	HWND		g_hWnd = NULL;
 	
 	//will appear in the title bar of window
-	char g_TutorialName[100] = "Tutorial 07 Exercise 01\0";
+	char g_TutorialName[100] = "Assignment Boi's\0";
 	D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 	ID3D11Device*           g_pD3DDevice = NULL;
@@ -57,40 +59,25 @@ using namespace std;
 	Model *g_pModel3;
 	input *g_pInput;
 	skybox *g_pSkybox;
+	GameObject *g_pGameObject;
 	//XMVECTOR g_
 	float g_lightX =1.5f;
 	float g_DirectionalColours;
 	//Define vertex structure
-	struct POS_COL_TEX_NORM_VERTEX//This will be added to and renamed in future tutorials
-	{
-		XMFLOAT3	pos;
-		XMFLOAT4	Col;
-		XMFLOAT2	Texture0;
-		XMFLOAT3	Normal;
-	};
 
-	// Const buffer structs Must be 16 bytes
-	struct CONSTANT_BUFFERO
-	{
-		XMMATRIX WorldViewProjection; // 64bytes (4 x 4 = 16 floats x 4 bytes )
-		float RedAmount; //4 bytes
-		float scale; // 4 bytes
-		XMFLOAT2 packing_bytes; // 2x4 bytes = 8 bytes;
-		XMVECTOR direction_light_vector; // 16 bytes;
-		XMVECTOR directional_light_colour; // 16 bytes;
-		XMVECTOR ambient_light_colour; // 16 bytes;
-	}; // total size 128
-	ID3D11Buffer* g_pConstantBuffer0;
-	const int constBufferByteWidth = 128; // must be a multiple of 16
-	float redAmount; // for changing red input
-	float scaleAmout;
-	float degrees =15.0;
+
+
+
+	//const int constBufferByteWidth = 128; // must be a multiple of 16
+	//float redAmount; // for changing red input
+	//float scaleAmout;
+	//float degrees =15.0;
 	
 	//zBuffer
 	ID3D11DepthStencilView* g_pZBuffer;
 
 	camera* pCamera;
-
+	GameManager* g_pGameManger;
 #pragma endregion
 
 #pragma region Forward Declarations
@@ -107,26 +94,12 @@ using namespace std;
 
 
 
-	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-	/*D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_REFERENCE,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL);
-	MessageBox(NULL, "Hello World!", "[Your Name]", MB_OK);
-*/
-	
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{	
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+	
 	if (FAILED(InitialiseWindow(hInstance, nCmdShow)))
 	{
 		DXTRACE_MSG("Failed to create window");
@@ -137,11 +110,17 @@ using namespace std;
 		DXTRACE_MSG("Failed to create Device");
 		return 0;
 	}
-	if (FAILED(InitialiseGraphics()))
+	g_pGameManger = new GameManager(g_pD3DDevice, g_pImmediateContext, g_pSwapChain, &g_hWnd, &g_hInst, g_pBackBufferRTView, g_pZBuffer);
+	if (FAILED(g_pGameManger->InitialiseGraphics()))
 	{
 		DXTRACE_MSG("Failed to Initialise Graphics");
 		return 0;
 	}
+	//if (FAILED(InitialiseGraphics()))
+	//{
+	//	DXTRACE_MSG("Failed to Initialise Graphics");
+	//	return 0;
+	//}
 	g_pInput = new input(&g_hInst, &g_hWnd);
 	g_pInput->initialise();
 
@@ -159,7 +138,8 @@ using namespace std;
 		}
 		else
 		{
-			RenderFrame();
+			g_pGameManger->RenderFrame();
+			//RenderFrame();
 		}
 	}
 
@@ -220,78 +200,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-
-	//case WM_KEYDOWN:
-	//	if (wParam == VK_ESCAPE)
-	//		DestroyWindow(g_hWnd);
-	//	if (wParam == VK_UP)
-	//	{
-	//		//redAmount += 0.01f;
-	//		degrees += 0.3f;
-	//		g_pModel->IncXPos(1.0f);
-	//	}
-	//	if (wParam == VK_DOWN)
-	//	{
-	//		//redAmount -= 0.01f;
-	//		degrees -= 0.3f;
-	//		g_pModel->IncXPos(-1.0f);
-	//	}
-	//	if (wParam == VK_LEFT)
-	//	{
-	//		scaleAmout -= 0.1f;
-	//		
-	//		pCamera->rotate(-10.0f);
-	//	}
-	//	if (wParam == VK_RIGHT)
-	//	{
-	//		scaleAmout += 0.1f;
-	//		
-	//		pCamera->rotate(10.0f);
-	//	}
-	//	if (wParam == 0x41) //A
-	//	{
-	//		pCamera->strafe(-0.2f);
-	//	}
-	//	if (wParam == 0x44) // D
-	//	{
-	//		pCamera->strafe(0.2f);
-	//	}
-	//	if (wParam == 0x53) // S
-	//	{
-	//		pCamera->moveUp(-0.1f);
-	//	}
-	//	if (wParam == 0x57) //W
-	//	{
-	//		pCamera->moveUp(0.1f);
-	//	}
-	//	if (wParam == 0x52)//r
-	//	{
-	//		pCamera->rotateInX(10.0f);
-	//	}
-	//	if (wParam == 0x46)//f
-	//	{
-	//		pCamera->rotateInX(-10.0f);
-	//	}
-	//	if (wParam == VK_PRIOR) // page up
-	//	{
-	//		g_lightX += 1.0f;
-	//		//g_pModel->IncXPos(1.0f);
-	//	}
-	//	if (wParam == VK_NEXT) // page down
-	//	{
-	//		g_lightX -= 1.0f;
-	//		//g_pModel->IncXPos(-1.0f);
-	//	}
-	//	if (wParam == VK_INSERT)// insert 
-	//	{
-	//		g_DirectionalColours += 0.1f;
-	//	}
-	//	if (wParam == VK_DELETE)//del
-	//	{
-	//		g_DirectionalColours -= 0.1f;
-	//	}
-	//	return 0;
-
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -436,7 +344,7 @@ void ShutdownD3D()
 	if (g_pSampler0) g_pSampler0->Release();
 	//tutorial 4 
 	if (pCamera) delete(pCamera);
-	if (g_pConstantBuffer0) g_pConstantBuffer0->Release();
+
 
 	if (g_pVertexBuffer) g_pVertexBuffer->Release();
 	if (g_pInputLayout) g_pInputLayout->Release();
@@ -481,175 +389,9 @@ HRESULT InitialiseGraphics()
 	{
 		return hr;
 	}
-	//Define vertices of a triangle - screen coordinates -1.0 to +1.0
-	POS_COL_TEX_NORM_VERTEX vertices[] =
-	{
-		// back face 
-		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)	},
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)	},
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)	},
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)	},
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)	},
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)	},
 
-		// front face
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	XMFLOAT2(0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)  },
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)  },
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)  },
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)  },
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)  },
-		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	XMFLOAT2(1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)  },
-
-		// left face
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),XMFLOAT2(0.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f)  },
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f)	 },
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f)  },
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f)	 },
-		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) ,XMFLOAT2(0.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f)	 },
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) ,XMFLOAT2(1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f)	 },
-		
-		// right face
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.5f, 0.0f, 0.0f, 1.0f) ,XMFLOAT2(0.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)   },
-		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.5f, 0.0f, 0.0f, 1.0f) ,XMFLOAT2(0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)	},
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.5f, 0.0f, 0.0f, 1.0f) , XMFLOAT2(1.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)  },
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.5f, 0.0f, 0.0f, 1.0f) , XMFLOAT2(1.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)	},
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.5f, 0.0f, 0.0f, 1.0f) , XMFLOAT2(0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)	},
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.5f, 0.0f, 0.0f, 1.0f) , XMFLOAT2(1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)	},
-		
-		// bottom face
-		{ XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f) , XMFLOAT2(0.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f)	},
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f) , XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f)		},
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f) , XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f)	},
-		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f) , XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f)		},
-		{ XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f) , XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f)	},
-		{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f) , XMFLOAT2(1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f)	},
-		
-		// top face
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f),	XMFLOAT2(0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)		},
-		{ XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f) , XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)		},
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f) , XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)		},
-		{ XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f) , XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)		},
-		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f) , XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)		},
-		{ XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)		},
-
-	};
-
-	// setup texture buffer
-	D3D11_SAMPLER_DESC sampler_desc;
-	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-	g_pD3DDevice->CreateSamplerState(&sampler_desc, &g_pSampler0);
-
-	//Set up and create vertex buffer
-	D3D11_BUFFER_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;										//Allows use by CPU and GPU
-	bufferDesc.ByteWidth = sizeof(vertices);									//Set the total size of the buffer (in this case, 3 vertices)
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;							//Set the type of buffer to vertex buffer
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Allow access by the CPU
-	hr = g_pD3DDevice->CreateBuffer(&bufferDesc, NULL, &g_pVertexBuffer);		//Create the buffer
-
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
-
-	//Copy the vertices into the buffer
-	D3D11_MAPPED_SUBRESOURCE ms;
-
-	// tutorial 4 constant buffer
-	//create constant buffer
-	D3D11_BUFFER_DESC constant_buffer_desc;
-	ZeroMemory(&constant_buffer_desc, sizeof(constant_buffer_desc));
-
-	constant_buffer_desc.Usage = D3D11_USAGE_DEFAULT; // can use updateSubResource() to update
-	constant_buffer_desc.ByteWidth = constBufferByteWidth; // Must be a multiple fo 16 CB Struct  Could be a constant in
-	constant_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; // use as a constant buffer
-
-	hr = g_pD3DDevice->CreateBuffer(&constant_buffer_desc, NULL, &g_pConstantBuffer0);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-
-	//Lock the buffer to allow writing
-	g_pImmediateContext->Map(g_pVertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-
-	//Copy the data
-	memcpy(ms.pData, vertices, sizeof(vertices));
-
-	//Unlock the buffer
-	g_pImmediateContext->Unmap(g_pVertexBuffer, NULL);
-
-	//Load and compile the pixel and vertex shaders - use vs_5_0 to target DX11 hardware only
-	ID3DBlob *VS, *PS, *error;
-	hr = D3DX11CompileFromFile("shaders.hlsl", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, &error, 0);
-
-	if (error != 0)//Check for shader compilation error
-	{
-		OutputDebugStringA((char*)error->GetBufferPointer());
-		error->Release();
-		if (FAILED(hr))//Don't fail if error is just a warning
-		{
-			return hr;
-		}
-	}
-
-	hr = D3DX11CompileFromFile("shaders.hlsl", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &PS, &error, 0);
-
-	if (error != 0)//Check for shader compilation error
-	{
-		OutputDebugStringA((char*)error->GetBufferPointer());
-		error->Release();
-		if (FAILED(hr))//Don't fail if error is just a warning
-		{
-			return hr;
-		}
-	}
-
-	//Create shader objects
-	hr = g_pD3DDevice->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &g_pVertexShader);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-	hr = g_pD3DDevice->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &g_pPixelShader);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-	//Set the shader objects as active
-	g_pImmediateContext->VSSetShader(g_pVertexShader, 0, 0);
-	g_pImmediateContext->PSSetShader(g_pPixelShader, 0, 0);
-
-	//Create and set the input layout object
-	D3D11_INPUT_ELEMENT_DESC iedesc[] =
-	{
-		//Be very careful setting the correct dxgi format and D3D version
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		//NOTE the spelling of COLOR. Again, be careful setting the correct dxgi format (using A32) and correct D3D version
-		{ "COLOR", 0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{"TEXCOORD", 0,DXGI_FORMAT_R32G32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 }
-	};
-
-	hr = g_pD3DDevice->CreateInputLayout(iedesc, ARRAYSIZE(iedesc), VS->GetBufferPointer(), VS->GetBufferSize(), &g_pInputLayout);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-	g_pImmediateContext->IASetInputLayout(g_pInputLayout);
-
-	D3DX11CreateShaderResourceViewFromFile(g_pD3DDevice, "assets/texture.bmp", NULL, NULL, &g_pTexture0, NULL);
-	//hr = g_pModel->setupShader();
+	g_pGameObject = new GameObject(g_pD3DDevice, g_pImmediateContext);
+	hr = g_pGameObject->CreateModel((char*)"assets/teapot.obj", (char*)"assets/texture.bmp");
 	if (FAILED(hr))
 	{
 		return hr;
@@ -753,90 +495,9 @@ void RenderFrame(void)
 
 	//lighting
 	g_directional_light_shines_from = XMVectorSet(g_lightX, 0.0f, -1.0f, 0.0f);
-	//g_directional_light_colour = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);//green
 	g_directional_light_colour = XMVectorSet(g_DirectionalColours, g_DirectionalColours, g_DirectionalColours, 1.0f);//WHITE??? 
 	g_ambient_light_colour = XMVectorSet(1.1f, 1.1f, 1.1f, 1.0f);//dark grey - always use a small value for ambient lighting
-	//g_ambient_light_colour = XMVectorSet(0.9f, 0.9f, 0.9f, 1.0f);//BE LIT PLZ
-	//Set Vertex Buffer //03-01
-	//UINT stride = sizeof(POS_COL_TEX_NORM_VERTEX);
-	//UINT offset = 0;
-	//g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-
-	//XMMATRIX projection, world, view;
-	//// lighting
-	//XMMATRIX transpose;
-	////Tutorial 4
-	//CONSTANT_BUFFERO cb0_values;
-	//cb0_values.RedAmount = 0.5f; // 50% of vertex red value;
-	//cb0_values.scale = scaleAmout; 
-
-	//
-
-	//
-	//
-	//world = XMMatrixRotationX(XMConvertToRadians(degrees));
-	//world *= XMMatrixRotationZ(XMConvertToRadians(degrees));
-	//world *= XMMatrixTranslation(0, 0, 5);
-	//projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0), 640.0 / 480.0, 1.0, 100.0);
-	//view = pCamera->GetViewMatix();
-	//cb0_values.WorldViewProjection = world * view * projection;
-	//transpose = XMMatrixTranspose(world);
-	//cb0_values.directional_light_colour = g_directional_light_colour;
-	//cb0_values.ambient_light_colour = g_ambient_light_colour;
-	//cb0_values.direction_light_vector = XMVector3Transform(g_directional_light_shines_from, transpose);
-	//cb0_values.direction_light_vector = XMVector3Normalize(cb0_values.direction_light_vector);
-
-	////upload the new values for the constant buffer
-	//g_pImmediateContext->UpdateSubresource(g_pConstantBuffer0, 0, 0, &cb0_values, 0, 0);
-
-	////TestedCode That I don't know 
-	////Tutorial 4
-	//
-
-	//g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer0);
-	////Tutorial 4
-
-	////select which primtive to use  //03-01
-	//g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	////setting textures
-	//g_pImmediateContext->PSSetSamplers(0, 1, &g_pSampler0);
-	//g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTexture0);
-
-	////draw the vertex buffer to the back buffer //03-01
-	//g_pImmediateContext->Draw(36, 0);
-	//// RENDER HERE
-	//
-	//
-	//CONSTANT_BUFFERO cb1_values;
-	//cb1_values.RedAmount = 0.75f; // 50% of vertex red value;
-	//cb1_values.scale = scaleAmout;
-
-	//XMMATRIX projection1, world1, view1;
-
-	//world1 = XMMatrixRotationX(XMConvertToRadians(degrees));
-	//world1 *= XMMatrixRotationZ(XMConvertToRadians(degrees));
-	//world1 *= XMMatrixTranslation(0, 2, 7);
-	//projection1 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 640.0 / 480.0, 1.0, 100.0);
-	//view1 = XMMatrixIdentity();
-	//cb1_values.WorldViewProjection = world1 * view1 * projection1;
-
-	//transpose = XMMatrixTranspose(world1);
-	//cb1_values.directional_light_colour = g_directional_light_colour;
-	//cb1_values.ambient_light_colour = g_ambient_light_colour;
-	//cb1_values.direction_light_vector = XMVector3Transform(g_directional_light_shines_from, transpose);
-	//cb1_values.direction_light_vector = XMVector3Normalize(cb1_values.direction_light_vector);
-	//upload the new values for the constant buffer
-	//g_pImmediateContext->UpdateSubresource(g_pConstantBuffer0, 0, 0, &cb1_values, 0, 0);
-	//g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer0);
-	//Tutorial 4
-
-	//select which primtive to use  //03-01
-	//g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//g_pImmediateContext->Draw(36, 0);
 	
-
-	//pObject->Draw();
 	
 	g_pModel->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel->setDirectionLightVector(&g_directional_light_shines_from);
@@ -844,7 +505,7 @@ void RenderFrame(void)
 
 	//g_pModel->lookAt_XZ(pCamera->getX(), pCamera->getZ());
 	g_pModel->lookAt_XZ(g_pModel3->GetXPos(), g_pModel3->GetZPos());
-	g_pModel->moveForward(0.001f);
+	//g_pModel->moveForward(0.001f);
 	
 	if (g_pModel->CheckCollision(g_pModel3))
 	{
@@ -861,8 +522,6 @@ void RenderFrame(void)
 	g_pModel2->lookAt_XZ(pCamera->getX(), pCamera->getZ());
 	g_pModel->moveForward(0.001f);
 	g_pModel2->Draw(&view2, &projection2);
-	//render text
-	g_2DText->RenderText();
 	
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
 	view2 = pCamera->GetViewMatix();
@@ -880,9 +539,10 @@ void RenderFrame(void)
 
 	}
 	g_pModel3->Draw(&view2, &projection2);
-
-	
-	//g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
+	g_pGameObject->update(&view2, &projection2);
+	//render text
+	g_2DText->RenderText();	
 	// Display what has just been rendered
 	g_pSwapChain->Present(0, 0);
 }
