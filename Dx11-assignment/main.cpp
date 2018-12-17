@@ -93,6 +93,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		else
 		{
+
+			// call timer 
+			// if not paused to render n stuff
 			g_pGameManger->RenderFrame();
 		}
 	}
