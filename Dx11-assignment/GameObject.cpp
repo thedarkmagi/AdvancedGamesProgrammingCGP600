@@ -22,12 +22,29 @@ HRESULT GameObject::CreateModel(char * ModelFilename, char * TextureFilename)
 {
 	HRESULT hr = S_OK;
 	m_pModel = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = m_pModel->LoadObjModel(ModelFilename);
+	hr = m_pModel->LoadObjModel(ModelFilename,0);
 	if (FAILED(hr))//Return an error code if failed
 	{
 		return hr;
 	}
 	hr = m_pModel->AddTexture(TextureFilename);
+	if (FAILED(hr))//Return an error code if failed
+	{
+		return hr;
+	}
+	return hr;
+}
+
+HRESULT GameObject::CreateModel(char * ModelFilename, char * TextureFilename, char * TextureFilename2)
+{
+	HRESULT hr = S_OK;
+	m_pModel = new Model(m_pD3DDevice, m_pImmediateContext);
+	hr = m_pModel->LoadObjModel(ModelFilename,1);
+	if (FAILED(hr))//Return an error code if failed
+	{
+		return hr;
+	}
+	hr = m_pModel->AddTexture(TextureFilename, TextureFilename2);
 	if (FAILED(hr))//Return an error code if failed
 	{
 		return hr;

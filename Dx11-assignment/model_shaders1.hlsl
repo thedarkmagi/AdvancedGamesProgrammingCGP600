@@ -4,9 +4,11 @@ cbuffer CBuffer0
 	float4 directional_light_vector; // 16 bytes;
 	float4 directional_light_colour; // 16 bytes;
 	float4 ambient_light_colour; // 16 bytes;
+	bool twoTextures; // 2 bytes
 };
 
 Texture2D texture0;
+Texture2D texture1;
 SamplerState sampler0;
 
 struct VOut
@@ -39,5 +41,6 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 
 float4 ModelPS(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET
 {
-	return  texture0.Sample(sampler0, texcoord) * color;
+	return  (texture0.Sample(sampler0, texcoord)* texture1.Sample(sampler0, texcoord)) * color;
+
 }

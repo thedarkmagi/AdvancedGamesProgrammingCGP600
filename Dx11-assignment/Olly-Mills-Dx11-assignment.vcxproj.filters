@@ -46,8 +46,9 @@
   <ItemGroup>
     <FxCompile Include="shaders.hlsl" />
     <FxCompile Include="text2D_shaders.hlsl" />
-    <FxCompile Include="model_shaders.hlsl" />
     <FxCompile Include="Skybox_shaders.hlsl" />
+    <FxCompile Include="model_shaders0.hlsl" />
+    <FxCompile Include="model_shaders1.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

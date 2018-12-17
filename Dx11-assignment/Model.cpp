@@ -1,11 +1,12 @@
 #include "Model.h"
-
+#include <sstream>
 struct MODEL_CONSTANT_BUFFER
 {
 	XMMATRIX WorldViewProjection; // 64bytes
 	XMVECTOR direction_light_vector; // 16 bytes;
 	XMVECTOR directional_light_colour; // 16 bytes;
 	XMVECTOR ambient_light_colour; // 16 bytes;
+	bool	twoTextures;
 };// total 112;
 const int constantBufferByteWidth = 112;
 
@@ -91,9 +92,10 @@ Model::Model(ID3D11Device * device, ID3D11DeviceContext * deviceContext)
 	m_yAngle = 0.0f;
 	m_zAngle = 0.0f;
 	m_scale = 0.50f;
+	m_twoTextures = false;
 }
 
-HRESULT Model::LoadObjModel(char * Filename)
+HRESULT Model::LoadObjModel(char * Filename, int shaderFileNumber)
 {
 	HRESULT hr = S_OK;
 
@@ -116,7 +118,10 @@ HRESULT Model::LoadObjModel(char * Filename)
 	}
 	//Load and compile the pixel and vertex shaders - use vs_5_0 to target DX11 hardware only
 	ID3DBlob *VS, *PS, *error;
-	hr = D3DX11CompileFromFile("model_shaders.hlsl", 0, 0, "ModelVS", "vs_4_0", 0, 0, 0, &VS, &error, 0);
+	std::stringstream ss;
+	ss<< "model_shaders"<<std::to_string(shaderFileNumber).c_str() << ".hlsl";
+	string input = ss.str();
+	hr = D3DX11CompileFromFile((LPCSTR)input.c_str(), 0, 0, "ModelVS", "vs_4_0", 0, 0, 0, &VS, &error, 0);
 	if (error != 0)//Check for shader compilation error
 	{
 		OutputDebugStringA((char*)error->GetBufferPointer());
@@ -126,7 +131,7 @@ HRESULT Model::LoadObjModel(char * Filename)
 			return hr;
 		}
 	}
-	hr = D3DX11CompileFromFile("model_shaders.hlsl", 0, 0, "ModelPS", "ps_4_0", 0, 0, 0, &PS, &error, 0);
+	hr = D3DX11CompileFromFile((LPCSTR)input.c_str(), 0, 0, "ModelPS", "ps_4_0", 0, 0, 0, &PS, &error, 0);
 	if (error != 0)//Check for shader compilation error
 	{
 		OutputDebugStringA((char*)error->GetBufferPointer());
@@ -247,7 +252,15 @@ void Model::Draw(XMMATRIX* view, XMMATRIX* projection)
 	model_cb_values.directional_light_colour = *directional_light_colour;
 	model_cb_values.direction_light_vector = XMVector3Transform(*direction_light_vector, transpose);
 	model_cb_values.direction_light_vector = XMVector3Normalize(model_cb_values.direction_light_vector);
-
+	if (m_twoTextures)
+	{
+		model_cb_values.twoTextures = true;
+		m_pImmediateContext->PSSetShaderResources(1, 1, &m_pTexture1);
+	}
+	else
+	{
+		model_cb_values.twoTextures = false;
+	}
 	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &model_cb_values, 0, 0);
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
 	
@@ -259,6 +272,8 @@ void Model::Draw(XMMATRIX* view, XMMATRIX* projection)
 
 	m_pImmediateContext->PSSetSamplers(0, 1, &m_pSampler0);
 	m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture0);
+	
+	
 	m_pObject->Draw();
 	
 }
@@ -279,6 +294,25 @@ HRESULT Model::AddTexture(char* filename)
 
 	D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename, NULL, NULL, &m_pTexture0, NULL);
 
+	return hr;
+}
+
+HRESULT Model::AddTexture(char * filename, char * filename2)
+{
+	HRESULT hr = S_OK;
+	m_twoTextures = true;
+	// setup texture buffer
+	D3D11_SAMPLER_DESC sampler_desc;
+	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
+	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+	m_pD3DDevice->CreateSamplerState(&sampler_desc, &m_pSampler0);
+
+	D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename, NULL, NULL, &m_pTexture0, NULL);
+	D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename2, NULL, NULL, &m_pTexture1, NULL);
 	return hr;
 }
 
@@ -483,6 +517,7 @@ void Model::setAmbientLightColour(XMVECTOR * ambientLightColour)
 
 Model::~Model()
 {
+	if (m_pTexture1) m_pTexture1->Release();
 	if (m_pTexture0) m_pTexture0->Release();
 	if (m_pSampler0) m_pSampler0->Release();
 	if (m_pObject) delete m_pObject;

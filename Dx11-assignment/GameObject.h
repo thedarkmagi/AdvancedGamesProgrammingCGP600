@@ -8,6 +8,7 @@ public:
 	~GameObject();
 
 	HRESULT CreateModel(char * ModelFilename, char * TextureFilename);
+	HRESULT CreateModel(char * ModelFilename, char * TextureFilename, char * TextureFilename2);
 	void update(XMMATRIX* view, XMMATRIX* projection);
 	void setLightingValues(XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
 private:

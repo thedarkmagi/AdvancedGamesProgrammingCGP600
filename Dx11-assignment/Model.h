@@ -12,6 +12,7 @@ private:
 	ID3D11InputLayout*	m_pInputLayout;
 	ID3D11Buffer*		m_pConstantBuffer;
 	ID3D11ShaderResourceView* m_pTexture0;
+	ID3D11ShaderResourceView* m_pTexture1;
 	ID3D11SamplerState* m_pSampler0;
 
 	float			m_x, m_y, m_z;
@@ -21,7 +22,7 @@ private:
 					m_bounding_sphere_centre_y,
 					m_bounding_sphere_centre_z, 
 					m_bounding_sphere_radius;
-
+	bool			m_twoTextures;
 	XMVECTOR* direction_light_vector; // 16 bytes;
 	XMVECTOR* directional_light_colour; // 16 bytes;
 	XMVECTOR* ambient_light_colour; // 16 bytes;
@@ -31,10 +32,11 @@ private:
 public:
 	Model(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~Model();
-	HRESULT LoadObjModel(char* Filename);
+	HRESULT LoadObjModel(char* Filename, int shaderFileNumber);
 	HRESULT setupShader();
 	void Draw(XMMATRIX* view, XMMATRIX* projection);
 	HRESULT AddTexture(char* filename);
+	HRESULT AddTexture(char* filename, char* filename2);
 	void lookAt_XZ(float x, float z);
 	void moveForward(float distance);
 

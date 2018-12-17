@@ -71,8 +71,6 @@ void GameManager::RenderFrame(void)
 	}*/
 
 
-
-
 	g_2DText->AddText("some Text", -1.0, +1.0, 0.2);
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
@@ -147,19 +145,19 @@ HRESULT GameManager::InitialiseGraphics(void)
 {
 	HRESULT hr = S_OK;
 	g_pModel = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pModel->LoadObjModel((char*)"assets/Sphere.obj");
+	hr = g_pModel->LoadObjModel((char*)"assets/Sphere.obj",0);
 	if (FAILED(hr))//Return an error code if failed
 	{
 		return hr;
 	}
 	g_pModel2 = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pModel2->LoadObjModel((char*)"assets/plane.obj");
+	hr = g_pModel2->LoadObjModel((char*)"assets/plane.obj", 0);
 	if (FAILED(hr))//Return an error code if failed
 	{
 		return hr;
 	}
 	g_pModel3 = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pModel3->LoadObjModel((char*)"assets/PointySphere.obj");
+	hr = g_pModel3->LoadObjModel((char*)"assets/PointySphere.obj", 0);
 	if (FAILED(hr))//Return an error code if failed
 	{
 		return hr;
@@ -174,7 +172,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 	}
 
 	g_pGameObject = new GameObject(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pGameObject->CreateModel((char*)"assets/teapot.obj", (char*)"assets/texture.bmp");
+	hr = g_pGameObject->CreateModel((char*)"assets/teapot.obj", (char*)"assets/texture.bmp", (char*)"assets/texture3.png");
 	if (FAILED(hr))
 	{
 		return hr;
