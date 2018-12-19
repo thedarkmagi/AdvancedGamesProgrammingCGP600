@@ -16,6 +16,7 @@ GameManager::GameManager(ID3D11Device * device, ID3D11DeviceContext * deviceCont
 
 	g_pInput = new input(g_hInst, g_hWnd);
 	g_pInput->initialise();
+	SetupAlphaBlendStates();
 }
 
 
@@ -136,7 +137,9 @@ void GameManager::RenderFrame(void)
 	g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	g_pGameObject->update(&view2, &projection2);
 	//render text
+	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
 	g_2DText->RenderText();
+	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendDisable, 0, 0xfffffff);
 	// Display what has just been rendered
 	g_pSwapChain->Present(0, 0);
 }
@@ -199,7 +202,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 		return hr;
 	}
 
-	g_2DText = new Text2D("assets/font1.bmp", m_pD3DDevice, m_pImmediateContext);
+	g_2DText = new Text2D("assets/font2.png", m_pD3DDevice, m_pImmediateContext);
 
 	g_pModel->SetZPos(10.0f);
 	g_pModel->SetXPos(10.0f);
@@ -217,4 +220,21 @@ HRESULT GameManager::InitialiseGraphics(void)
 
 	pCamera->rotateInX(3);
 	return hr;
+}
+
+HRESULT GameManager::SetupAlphaBlendStates()
+{
+	D3D11_BLEND_DESC blend;
+	blend.RenderTarget[0].BlendEnable = true;
+	blend.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blend.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blend.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blend.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blend.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blend.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blend.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blend.IndependentBlendEnable = false;
+	blend.AlphaToCoverageEnable = false;
+	m_pD3DDevice->CreateBlendState(&blend, &m_pAlphaBlendEnable);
+	return E_NOTIMPL;
 }

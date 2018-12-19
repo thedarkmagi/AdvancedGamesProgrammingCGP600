@@ -24,6 +24,7 @@ public:
 	~GameManager();
 	void RenderFrame(void);
 	HRESULT InitialiseGraphics(void);
+	HRESULT SetupAlphaBlendStates();
 private:
 	ID3D11Device *			m_pD3DDevice;
 	ID3D11DeviceContext*	m_pImmediateContext;
@@ -55,5 +56,9 @@ private:
 	float g_DirectionalColours;
 	Text2D* g_2DText; 
 	camera* pCamera; 
+
+	// alpha blending variables
+	ID3D11BlendState* m_pAlphaBlendEnable;
+	ID3D11BlendState* m_pAlphaBlendDisable;
 };
 
