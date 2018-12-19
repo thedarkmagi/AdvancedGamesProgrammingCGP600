@@ -72,7 +72,7 @@ void GameManager::RenderFrame(void)
 	}*/
 
 
-	g_2DText->AddText("some Text", -1.0, +1.0, 0.2);
+	g_2DText->AddText("some text", -1.0, +1.0, 0.2);
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 	m_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
@@ -202,7 +202,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 		return hr;
 	}
 
-	g_2DText = new Text2D("assets/font2.png", m_pD3DDevice, m_pImmediateContext);
+	g_2DText = new Text2D("assets/font3.png", m_pD3DDevice, m_pImmediateContext);
 
 	g_pModel->SetZPos(10.0f);
 	g_pModel->SetXPos(10.0f);
