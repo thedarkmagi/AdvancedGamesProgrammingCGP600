@@ -72,7 +72,7 @@ void GameManager::RenderFrame(void)
 	}*/
 
 
-	g_2DText->AddText("some text", -1.0, +1.0, 0.2);
+	g_2DText->AddText("RSTUVWXYZ", -1.0, +1.0, 0.2);
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 	m_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
