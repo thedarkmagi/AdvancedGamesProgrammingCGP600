@@ -1,5 +1,5 @@
 #pragma once
-#include<Windows.h>
+#include<windows.h>
 
 class GameTimer
 {
@@ -17,8 +17,7 @@ public:
 	void operator=(GameTimer const&) = delete;
 	
 	
-	GameTimer();
-	~GameTimer();
+	
 
 	float GameTime()const;// in seconds
 	float DeltaTime() const; // in seconds#
@@ -29,6 +28,8 @@ public:
 	void Tick(); // call every frame
 
 private:
+	GameTimer();
+	~GameTimer();
 	double mSecondsPerCount;
 	double mDeltaTime;
 	__int64 mBaseTime;
