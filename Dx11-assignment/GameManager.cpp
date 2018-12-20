@@ -138,9 +138,10 @@ void GameManager::RenderFrame(void)
 	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	//g_pGameObject->update(&view2, &projection2);
 	//g_pParticleGenerator->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
+	
 	//render text
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
+	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
 	g_2DText->RenderText();
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendDisable, 0, 0xfffffff);
 	// Display what has just been rendered

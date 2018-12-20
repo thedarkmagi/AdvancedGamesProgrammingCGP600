@@ -136,7 +136,7 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 					m_age = 2.0f;
 					m_untilParticle = 0.008f;
 					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
-					(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), 1.0f);
+					(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne());
 					(*it)->gravity = 4.5f;
 					(*it)->position = XMFLOAT3(0.0f, 1.0f, 3.0f);
 					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne(), 2.50f, RandomNegOneToPosOne());
@@ -403,12 +403,14 @@ bool ParticleGenerator::CheckCollision(ParticleGenerator * input)
 
 float ParticleGenerator::RandomZeroToOne()
 {
-	return rand()%1;
+	float temp = ((rand() % 1000) / 1000.0f);
+	return temp;
 }
 
 float ParticleGenerator::RandomNegOneToPosOne()
 {
-	return rand()%2-1;
+	float temp = ((rand() % 1000) / 1000.0f) -(rand() % 2);
+	return temp;
 }
 
 int ParticleGenerator::ParticleFactory()
