@@ -72,7 +72,8 @@ void GameManager::RenderFrame(void)
 	}*/
 
 
-	g_2DText->AddText("0123456789", -1.0, +1.0,  16/9 *0.2);
+	//g_2DText->AddText(to_string( GameTimer::getInstance()->GameTime()), -1.0, +1.0,  16/9 *0.2);
+	g_2DText->AddText("Well Sure good luck", -1.0, +1.0, 16 / 9 * 0.1);
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 	m_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
@@ -136,7 +137,7 @@ void GameManager::RenderFrame(void)
 	g_pModel3->Draw(&view2, &projection2);
 	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	//g_pGameObject->update(&view2, &projection2);
-	g_pParticleGenerator->Draw(&view2, &projection2, NULL);
+	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
 	//render text
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
 	g_2DText->RenderText();

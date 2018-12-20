@@ -104,7 +104,7 @@ HRESULT ParticleGenerator::setupShader()
 	return hr;
 }
 
-void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMMATRIX * cameraPosition)
+void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * cameraPosition)
 {
 	/*Particle test;
 	test.color = XMFLOAT4(1.0f, 0.0f, 0.3f, 1.0f);
@@ -228,7 +228,7 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMMATRIX * 
 	}
 }
 
-void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * projection, XMMATRIX * cameraPosition)
+void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * projection, XMVECTOR * cameraPosition)
 {
 	UINT stride = sizeof(XMFLOAT3);
 	XMMATRIX world;

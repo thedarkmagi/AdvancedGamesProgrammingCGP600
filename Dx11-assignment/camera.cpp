@@ -78,6 +78,11 @@ XMMATRIX camera::GetViewMatix()
 	return XMMatrixLookAtLH(m_position, m_lookat, m_up);
 }
 
+XMVECTOR camera::GetCameraPos()
+{
+	return m_position;
+}
+
 float camera::getX()
 {
 	return m_x;

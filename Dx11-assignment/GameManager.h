@@ -9,6 +9,7 @@
 #define XM_NO_ALIGNMENT
 #include <xnamath.h>
 
+#include "GameTimer.h"
 #include "camera.h"
 #include "text2D.h"
 #include "objfilemodel.h"

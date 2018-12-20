@@ -16,7 +16,7 @@ public:
 	void moveUp(float distance);
 	void rotateInX(float distance);
 	XMMATRIX GetViewMatix();
-
+	XMVECTOR GetCameraPos();
 	float getX();
 	float getY();
 	float getZ();

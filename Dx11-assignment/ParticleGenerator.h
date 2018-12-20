@@ -61,8 +61,8 @@ public:
 	HRESULT LoadObjModel(char* Filename, int shaderFileNumber);
 	HRESULT setupShader();
 	void Draw(XMMATRIX* view, XMMATRIX* projection);
-	void Draw(XMMATRIX* view, XMMATRIX* projection, XMMATRIX* cameraPosition);
-	void DrawOne(Particle* one, XMMATRIX* view, XMMATRIX* projection, XMMATRIX* cameraPosition);
+	void Draw(XMMATRIX* view, XMMATRIX* projection, XMVECTOR* cameraPosition);
+	void DrawOne(Particle* one, XMMATRIX* view, XMMATRIX* projection, XMVECTOR* cameraPosition);
 	HRESULT AddTexture(char* filename);
 	HRESULT AddTexture(char* filename, char* filename2);
 	void lookAt_XZ(float x, float z);
