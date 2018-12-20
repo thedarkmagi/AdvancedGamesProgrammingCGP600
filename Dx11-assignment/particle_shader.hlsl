@@ -15,7 +15,7 @@ struct VOut
 
 
 
-VOut VShader(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal: NORMAL)
+VOut VShader(float4 position : POSITION)
 {
 	VOut output;
 	
