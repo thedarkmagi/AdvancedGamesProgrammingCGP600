@@ -53,12 +53,12 @@ private:
 	XMVECTOR* directional_light_colour; // 16 bytes;
 	XMVECTOR* ambient_light_colour; // 16 bytes;
 
-	void CalculateModelCentrePoint();
-	void CalculaterBoundingSphereRadius();
+	//void CalculateModelCentrePoint();
+	//void CalculaterBoundingSphereRadius();
 public:
 	ParticleGenerator(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~ParticleGenerator();
-	HRESULT LoadObjModel(char* Filename, int shaderFileNumber);
+
 	HRESULT setupShader();
 	void Draw(XMMATRIX* view, XMMATRIX* projection);
 	void Draw(XMMATRIX* view, XMMATRIX* projection, XMVECTOR* cameraPosition);
@@ -74,7 +74,7 @@ public:
 	float RandomZeroToOne();
 	float RandomNegOneToPosOne();
 	int ParticleFactory();
-	void initilizeParticleList();
+	//void initilizeParticleList();
 #pragma region Gets & Sets
 	void SetXPos(float num);
 	void SetYPos(float num);

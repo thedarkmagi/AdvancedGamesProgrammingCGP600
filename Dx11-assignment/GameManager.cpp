@@ -115,9 +115,9 @@ void GameManager::RenderFrame(void)
 	g_pModel2->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel2->setAmbientLightColour(&g_ambient_light_colour);
 
-	g_pModel2->lookAt_XZ(pCamera->getX(), pCamera->getZ());
+	//g_pModel2->lookAt_XZ(pCamera->getX(), pCamera->getZ());
 	g_pModel->moveForward(0.001f);
-	g_pModel2->Draw(&view2, &projection2);
+	//g_pModel2->Draw(&view2, &projection2);
 
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
 	view2 = pCamera->GetViewMatix();
@@ -205,6 +205,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 	}
 	g_pParticleGenerator = new ParticleGenerator(m_pD3DDevice, m_pImmediateContext);
 	g_pParticleGenerator->ParticleFactory();
+	g_pParticleGenerator->setIsActive(true);
 	g_2DText = new Text2D("assets/font3.png", m_pD3DDevice, m_pImmediateContext);
 
 	g_pModel->SetZPos(10.0f);

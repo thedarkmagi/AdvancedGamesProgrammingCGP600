@@ -116,120 +116,123 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 
 
 
-	//UINT stride = sizeof(XMFLOAT3);
-	//UINT offset = 0;
-	//XMMATRIX world;
-	//m_untilParticle -= GameTimer::getInstance()->DeltaTime();
-	//
-	//if (m_untilParticle <= 0.0f)
-	//{
-	//	if (m_isActive)//a bool to check if the particle engine is on or off. Make a getter/setter and use it in main
-	//	{
-	//		it = m_free.begin();//point to the beggining of the free list
-	//							//add a new particle to the back of m_active from the front of m_free
-	//		if (m_free.size() != NULL)//safety check
-	//		{
-	//			switch (pType)//the name of my enum
-	//			{
-	//			case RAINBOW_FOUNTAIN:
-	//			{
-	//				m_age = 2.0f;
-	//				m_untilParticle = 0.008f;
-	//				////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
-	//				(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), 1.0f);
-	//				(*it)->gravity = 4.5f;
-	//				(*it)->position = XMFLOAT3(0.0f, 1.0f, 3.0f);
-	//				(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne(), 2.50f, RandomNegOneToPosOne());
-	//					////////////////////////////////////////////////////////////////////////////////////////////////
-	//					break;
-	//			}
-	//			default:
-	//			{
-	//				break;
-	//			}
-	//			}
-	//			(*it)->age = 0.0f;//set age to 0. this is used for knowing when to delete the particle
+	UINT stride = sizeof(XMFLOAT3);
+	UINT offset = 0;
+	XMMATRIX world;
+	m_untilParticle -= GameTimer::getInstance()->DeltaTime();
+	
+	if (m_untilParticle <= 0.0f)
+	{
+		if (m_isActive)//a bool to check if the particle engine is on or off. Make a getter/setter and use it in main
+		{
+			it = m_free.begin();//point to the beggining of the free list
+								//add a new particle to the back of m_active from the front of m_free
+			if (m_free.size() != NULL)//safety check
+			{
+				switch (pType)//the name of my enum
+				{
+				case RAINBOW_FOUNTAIN:
+				{
+					m_age = 2.0f;
+					m_untilParticle = 0.008f;
+					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
+					(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), 1.0f);
+					(*it)->gravity = 4.5f;
+					(*it)->position = XMFLOAT3(0.0f, 1.0f, 3.0f);
+					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne(), 2.50f, RandomNegOneToPosOne());
+						////////////////////////////////////////////////////////////////////////////////////////////////
+						break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+				(*it)->age = 0.0f;//set age to 0. this is used for knowing when to delete the particle
 
-	//							  //////add the particle from the front of the available list to the back of the active list and remove it
-	//			m_active.push_back(*it);
-	//			m_free.pop_front();
-	//		}
-	//	}
-	//	else m_untilParticle = 0.001f;
-	//}
+								  //////add the particle from the front of the available list to the back of the active list and remove it
+				m_active.push_back(*it);
+				m_free.pop_front();
+			}
+		}
+		else m_untilParticle = 0.001f;
+	}
 
-	//if (m_active.size() != NULL)//safety check
-	//{
-	//	it = m_active.begin();//point the iterator to the front of the active list ready for processing
-	//	while (it != m_active.end())//move all of the particles
-	//	{
+	if (m_active.size() != NULL)//safety check
+	{
+		it = m_active.begin();//point the iterator to the front of the active list ready for processing
+		while (it != m_active.end())//move all of the particles
+		{
 
-	//		switch (pType)
-	//		{
-	//		case RAINBOW_FOUNTAIN:
-	//		{
-	//			/////////////////////////ALL of this is adjustable for different effects///////////////////////////////////////////////////////////
-	//			(*it)->age += GameTimer::getInstance()->DeltaTime();
-	//			(*it)->velocity.y -= (*it)->gravity*(GameTimer::getInstance()->DeltaTime());
-	//			(*it)->position.x += (*it)->velocity.x*(GameTimer::getInstance()->DeltaTime());
-	//			(*it)->position.y += (*it)->velocity.y*(GameTimer::getInstance()->DeltaTime());
-	//			(*it)->position.z += (*it)->velocity.z*(GameTimer::getInstance()->DeltaTime());
-	//			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//			break;
-	//		}
-	//		default:
-	//		{
-	//			break;
-	//		}
-	//		}
-	//		world = XMMatrixIdentity();
-	//		switch (pType)
-	//		{
-	//		case RAINBOW_FOUNTAIN:
-	//		{
-	//			/*set scale and world transforms here*/
-	//			break;
-	//		}
-	//		default:
-	//		{
-	//			break;
-	//		}
-	//		world *= XMMatrixTranslation((*it)->position.x, (*it)->position.y, (*it)->position.z);
+			switch (pType)
+			{
+				case RAINBOW_FOUNTAIN:
+				{
+					/////////////////////////ALL of this is adjustable for different effects///////////////////////////////////////////////////////////
+					(*it)->age += GameTimer::getInstance()->DeltaTime();
+					(*it)->velocity.y -= (*it)->gravity*(GameTimer::getInstance()->DeltaTime());
+					(*it)->position.x += (*it)->velocity.x*(GameTimer::getInstance()->DeltaTime());
+					(*it)->position.y += (*it)->velocity.y*(GameTimer::getInstance()->DeltaTime());
+					(*it)->position.z += (*it)->velocity.z*(GameTimer::getInstance()->DeltaTime());
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+			world = XMMatrixIdentity();
+			switch (pType)
+			{
+				case RAINBOW_FOUNTAIN:
+				{
+					/*set scale and world transforms here*/
+					world *= XMMatrixScaling(1.3f, 01.3f, 01.3f);
+					world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+			world *= XMMatrixTranslation((*it)->position.x, (*it)->position.y, (*it)->position.z);
 
-	//		//constant buffer stuff for shader
-	//		Particle_Constant_Buffer pcb;
-	//		pcb.WorldViewProjection = (world) * (*view)*(*projection);
-	//		pcb.color = (*it)->color;
+			//constant buffer stuff for shader
+			Particle_Constant_Buffer pcb;
+			pcb.WorldViewProjection = (world) * (*view)*(*projection);
+			pcb.color = (*it)->color;
 
-	//		m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-	//		m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &pcb, 0, 0);
+			m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+			m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &pcb, 0, 0);
 
-	//		//set the shader objects as active
-	//		m_pImmediateContext->VSSetShader(m_pVShader, 0, 0);
-	//		m_pImmediateContext->PSSetShader(m_pPShader, 0, 0);
-	//		m_pImmediateContext->IASetInputLayout(m_pInputLayout);
+			//set the shader objects as active
+			m_pImmediateContext->VSSetShader(m_pVShader, 0, 0);
+			m_pImmediateContext->PSSetShader(m_pPShader, 0, 0);
+			m_pImmediateContext->IASetInputLayout(m_pInputLayout);
 
-	//		m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+			m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
-	//		m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//		m_pImmediateContext->RSSetState(m_pRasterParticle);//set backface culling to on
-	//		m_pImmediateContext->Draw(6, 0);//draw the particle
-	//		m_pImmediateContext->RSSetState(m_pRasterSolid);//set backface culling to off
-	//		if ((*it)->age >= m_age)//check the age of the current particle
-	//		{
-	//			it++;
-	//			m_active.front()->age = m_age;
-	//			m_active.front()->position = { (RandomNegOneToPosOne() + m_x * 10)*(RandomZeroToOne() * 10),m_y + 5.0f, /*position.z*/m_z /*camera_pos->z*/ + 7.0f };
-	//			m_active.front()->velocity = { /*RandomNegOneToPosOne()*/0.0f, 4.50f, RandomNegOneToPosOne() };
-	//			m_free.push_back(m_active.front());//move the (now previously) current active particle to the back of the pool			
-	//			m_active.pop_front();//remove the particle			
-	//		}
-	//		else it++;
-	//		}//end of while
-	//	}//end of if(m_active.size()!=NULL)
+			m_pImmediateContext->RSSetState(m_pRasterParticle);//set backface culling to on
+			m_pImmediateContext->Draw(6, 0);//draw the particle
+			m_pImmediateContext->RSSetState(m_pRasterSolid);//set backface culling to off
+			if ((*it)->age >= m_age)//check the age of the current particle
+			{
+				it++;
+				m_active.front()->age = m_age;
+				m_active.front()->position = { (RandomNegOneToPosOne() + m_x * 10)*(RandomZeroToOne() * 10),m_y + 5.0f, /*position.z*/m_z /*camera_pos->z*/ + 7.0f };
+				m_active.front()->velocity = { /*RandomNegOneToPosOne()*/0.0f, 4.50f, RandomNegOneToPosOne() };
+				m_free.push_back(m_active.front());//move the (now previously) current active particle to the back of the pool			
+				m_active.pop_front();//remove the particle			
+			}
+			else it++;
+		}//end of while
+	}//end of if(m_active.size()!=NULL)
 
-	//}
+	
 #pragma endregion
 }
 
@@ -239,7 +242,7 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 	UINT offset = 0;
 	XMMATRIX world;
 
-	world = XMMatrixScaling(0.3f, 0.3f, 0.3f);
+	world = XMMatrixScaling(1.3f, 01.3f, 01.3f);
 	world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
 	world *= XMMatrixTranslation(one->position.x, one->position.y, one->position.z);
 
@@ -247,6 +250,7 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 	particleCB.WorldViewProjection = world * (*view)*(*projection);
 	particleCB.color = one->color;
 
+#pragma region probably wrong commented render code
 	//m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	//m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -265,7 +269,8 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 
 
 	//m_pImmediateContext->Draw(6, 0);
-
+#pragma endregion
+	
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
 	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &particleCB, 0, 0);
 
