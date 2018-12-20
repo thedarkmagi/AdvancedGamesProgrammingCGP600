@@ -134,8 +134,9 @@ void GameManager::RenderFrame(void)
 
 	}
 	g_pModel3->Draw(&view2, &projection2);
-	g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
-	g_pGameObject->update(&view2, &projection2);
+	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
+	//g_pGameObject->update(&view2, &projection2);
+	g_pParticleGenerator->Draw(&view2, &projection2, NULL);
 	//render text
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
 	g_2DText->RenderText();
@@ -201,7 +202,8 @@ HRESULT GameManager::InitialiseGraphics(void)
 	{
 		return hr;
 	}
-
+	g_pParticleGenerator = new ParticleGenerator(m_pD3DDevice, m_pImmediateContext);
+	g_pParticleGenerator->ParticleFactory();
 	g_2DText = new Text2D("assets/font3.png", m_pD3DDevice, m_pImmediateContext);
 
 	g_pModel->SetZPos(10.0f);

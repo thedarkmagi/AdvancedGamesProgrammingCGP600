@@ -9,6 +9,8 @@
 #define _XM_NO_INTRINSICS_
 #define XM_NO_ALIGNMENT
 #include <xnamath.h>
+
+#include "GameTimer.h"
 #include "GameManager.h"
 
 #include "camera.h"
@@ -18,6 +20,7 @@
 #include "input.h"
 #include "skybox.h"
 #include "GameObject.h"
+
 using namespace std;
 #pragma region Globals
 	// globals //
@@ -38,7 +41,9 @@ using namespace std;
 	ID3D11DepthStencilView* g_pZBuffer;
 
 	camera* pCamera;
-	GameManager* g_pGameManger;
+	
+
+	
 #pragma endregion
 
 #pragma region Forward Declarations
@@ -48,8 +53,6 @@ using namespace std;
 
 	HRESULT InitialiseD3D();
 	void ShutdownD3D();
-	void RenderFrame(void);
-	HRESULT InitialiseGraphics(void);
 #pragma endregion
 
 
@@ -60,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	
+	GameManager* g_pGameManger;
 	if (FAILED(InitialiseWindow(hInstance, nCmdShow)))
 	{
 		DXTRACE_MSG("Failed to create window");
@@ -78,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-
+	GameTimer::getInstance()->Reset();
 #pragma region main message loop
 
 	// main message loop
@@ -93,7 +96,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		else
 		{
-
+			
+			GameTimer::getInstance()->Tick();
 			// call timer 
 			// if not paused to render n stuff
 			g_pGameManger->RenderFrame();
@@ -295,7 +299,7 @@ HRESULT InitialiseD3D()
 //////////////////////////////////////////////////////////////////////////////////////
 void ShutdownD3D()
 {
-	if (g_pGameManger) delete g_pGameManger;
+	//if (g_pGameManger) delete g_pGameManger;
 	if (g_pBackBufferRTView) g_pBackBufferRTView->Release();
 	if (g_pSwapChain) g_pSwapChain->Release();
 	if (g_pImmediateContext) g_pImmediateContext->Release();

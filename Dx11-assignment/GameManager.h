@@ -16,6 +16,7 @@
 #include "input.h"
 #include "skybox.h"
 #include "GameObject.h"
+#include "ParticleGenerator.h"
 class GameManager
 {
 public:
@@ -51,6 +52,7 @@ private:
 	input *g_pInput;
 	skybox *g_pSkybox;
 	GameObject *g_pGameObject;
+	ParticleGenerator* g_pParticleGenerator;
 
 	float g_lightX = 1.5f;
 	float g_DirectionalColours;
