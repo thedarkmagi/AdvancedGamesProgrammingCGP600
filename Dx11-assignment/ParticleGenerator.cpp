@@ -189,7 +189,9 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 				{
 					/*set scale and world transforms here*/
 					world *= XMMatrixScaling(1.3f, 01.3f, 01.3f);
-					world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
+					//world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
+					lookAt_XZ(cameraPosition->x, cameraPosition->z);
+					world *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
 					break;
 				}
 				default:
