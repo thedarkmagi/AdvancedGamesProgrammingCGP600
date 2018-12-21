@@ -106,16 +106,8 @@ HRESULT ParticleGenerator::setupShader()
 
 void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * cameraPosition)
 {
-	Particle test;
-	test.color = XMFLOAT4(1.0f, 0.0f, 0.3f, 1.0f);
-	test.gravity = 1;
-	test.position = XMFLOAT3(0.0f, 3.0f, 14);
-	test.velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	DrawOne(&test, view, projection, cameraPosition);
+
 #pragma region MultiParticleDraw
-
-
-
 	UINT stride = sizeof(XMFLOAT3);
 	UINT offset = 0;
 	XMMATRIX world;
@@ -188,7 +180,7 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 				case RAINBOW_FOUNTAIN:
 				{
 					/*set scale and world transforms here*/
-					world *= XMMatrixScaling(1.3f, 01.3f, 01.3f);
+					world *= XMMatrixScaling(0.3f, 0.3f, 0.3f);
 					//world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
 					lookAt_XZ(cameraPosition->x, cameraPosition->z);
 					world *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
@@ -233,8 +225,6 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 			else it++;
 		}//end of while
 	}//end of if(m_active.size()!=NULL)
-
-	
 #pragma endregion
 }
 
