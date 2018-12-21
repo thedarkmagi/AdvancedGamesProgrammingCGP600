@@ -18,6 +18,7 @@
 #include "skybox.h"
 #include "GameObject.h"
 #include "ParticleGenerator.h"
+#include "SceneNode.h"
 class GameManager
 {
 public:
@@ -48,7 +49,7 @@ private:
 
 	// testing stuff 
 	Model *g_pModel;
-	Model *g_pModel2;
+	//Model *g_pModel2;
 	Model *g_pModel3;
 	input *g_pInput;
 	skybox *g_pSkybox;
@@ -63,5 +64,11 @@ private:
 	// alpha blending variables
 	ID3D11BlendState* m_pAlphaBlendEnable;
 	ID3D11BlendState* m_pAlphaBlendDisable;
+
+	// scene nodes
+	SceneNode* g_root_node;
+	SceneNode* g_node1;
+	SceneNode* g_node2;
+
 };
 

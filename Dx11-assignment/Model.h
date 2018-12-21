@@ -35,6 +35,7 @@ public:
 	HRESULT LoadObjModel(char* Filename, int shaderFileNumber);
 	HRESULT setupShader();
 	void Draw(XMMATRIX* view, XMMATRIX* projection);
+	void Draw(XMMATRIX * world, XMMATRIX* view, XMMATRIX* projection);
 	HRESULT AddTexture(char* filename);
 	HRESULT AddTexture(char* filename, char* filename2);
 	void lookAt_XZ(float x, float z);
@@ -75,6 +76,9 @@ public:
 	void setDirectionLightVector(XMVECTOR* directionLightVector);
 	void setdirectionalLightColour(XMVECTOR* lightColour);
 	void setAmbientLightColour(XMVECTOR* ambientLightColour);
+
+	void SetSampler();
+	void SetTexture();
 #pragma endregion
 };
 

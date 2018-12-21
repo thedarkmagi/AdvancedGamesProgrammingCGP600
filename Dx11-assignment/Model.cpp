@@ -278,6 +278,40 @@ void Model::Draw(XMMATRIX* view, XMMATRIX* projection)
 	
 }
 
+void Model::Draw(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection)
+{
+	XMMATRIX transpose;
+	MODEL_CONSTANT_BUFFER model_cb_values;
+	model_cb_values.WorldViewProjection = (*world)*(*view)*(*projection);
+	transpose = XMMatrixTranspose(*world);
+
+	model_cb_values.ambient_light_colour = *ambient_light_colour;
+	model_cb_values.directional_light_colour = *directional_light_colour;
+	model_cb_values.direction_light_vector = XMVector3Transform(*direction_light_vector, transpose);
+	model_cb_values.direction_light_vector = XMVector3Normalize(model_cb_values.direction_light_vector);
+	if (m_twoTextures)
+	{
+		model_cb_values.twoTextures = true;
+		m_pImmediateContext->PSSetShaderResources(1, 1, &m_pTexture1);
+	}
+	else
+	{
+		model_cb_values.twoTextures = false;
+	}
+
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &model_cb_values, 0, 0);
+
+	m_pImmediateContext->VSSetShader(m_pVShader, 0, 0);
+	m_pImmediateContext->PSSetShader(m_pPShader, 0, 0);
+	m_pImmediateContext->IASetInputLayout(m_pInputLayout);
+	m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture0);
+	m_pImmediateContext->PSSetSamplers(0, 1, &m_pSampler0);
+
+	m_pObject->Draw();
+
+}
+
 HRESULT Model::AddTexture(char* filename)
 {
 	HRESULT hr = S_OK;

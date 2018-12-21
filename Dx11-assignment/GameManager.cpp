@@ -80,14 +80,15 @@ void GameManager::RenderFrame(void)
 
 	m_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	XMMATRIX projection2, view2;
+	XMMATRIX world, projection2, view2;
+	world = XMMatrixIdentity();
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
 	view2 = pCamera->GetViewMatix();
 	g_pSkybox->Draw(&view2, &projection2);
 	//Some things I need to work out
-	m_pImmediateContext->VSSetShader(g_pVertexShader, 0, 0);
-	m_pImmediateContext->PSSetShader(g_pPixelShader, 0, 0);
-	m_pImmediateContext->IASetInputLayout(g_pInputLayout);
+	//m_pImmediateContext->VSSetShader(g_pVertexShader, 0, 0);
+	//m_pImmediateContext->PSSetShader(g_pPixelShader, 0, 0);
+	//m_pImmediateContext->IASetInputLayout(g_pInputLayout);
 
 	//lighting
 	g_directional_light_shines_from = XMVectorSet(g_lightX, 0.0f, -1.0f, 0.0f);
@@ -100,23 +101,23 @@ void GameManager::RenderFrame(void)
 	g_pModel->setAmbientLightColour(&g_ambient_light_colour);
 
 	//g_pModel->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	g_pModel->lookAt_XZ(g_pModel3->GetXPos(), g_pModel3->GetZPos());
+	//g_pModel->lookAt_XZ(g_pModel3->GetXPos(), g_pModel3->GetZPos());
 	//g_pModel->moveForward(0.001f);
 
 	if (g_pModel->CheckCollision(g_pModel3))
 	{
 		DebugBreak;
-		g_pModel->moveForward(-0.001f);
+		//g_pModel->moveForward(-0.001f);
 	}
-	g_pModel->Draw(&view2, &projection2);
+	//g_pModel->Draw(&view2, &projection2);
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
 	view2 = pCamera->GetViewMatix();
-	g_pModel2->setdirectionalLightColour(&g_directional_light_colour);
+	/*g_pModel2->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel2->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel2->setAmbientLightColour(&g_ambient_light_colour);
-
+*/
 	//g_pModel2->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	g_pModel->moveForward(0.001f);
+	//g_pModel->moveForward(0.001f);
 	//g_pModel2->Draw(&view2, &projection2);
 
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
@@ -124,24 +125,24 @@ void GameManager::RenderFrame(void)
 	g_pModel3->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel3->setAmbientLightColour(&g_ambient_light_colour);
-
-	g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
-	g_pModel3->moveForward(0.001f);
+	g_root_node->execute(&world, &view2, &projection2);
+	//g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
+	//g_pModel3->moveForward(0.001f);
 
 	if (g_pModel3->CheckCollision(g_pModel))
 	{
 		DebugBreak;
-		g_pModel3->moveForward(-0.001f);
+		//g_pModel3->moveForward(-0.001f);
 
 	}
-	g_pModel3->Draw(&view2, &projection2);
+	//g_pModel3->Draw(&view2, &projection2);
 	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	//g_pGameObject->update(&view2, &projection2);
 	//g_pParticleGenerator->lookAt_XZ(pCamera->getX(), pCamera->getZ());
 	
 	//render text
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
-	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
+	//g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
 	g_2DText->RenderText();
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendDisable, 0, 0xfffffff);
 	// Display what has just been rendered
@@ -157,12 +158,12 @@ HRESULT GameManager::InitialiseGraphics(void)
 	{
 		return hr;
 	}
-	g_pModel2 = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pModel2->LoadObjModel((char*)"assets/plane.obj", 0);
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
+	//g_pModel2 = new Model(m_pD3DDevice, m_pImmediateContext);
+	//hr = g_pModel2->LoadObjModel((char*)"assets/plane.obj", 0);
+	//if (FAILED(hr))//Return an error code if failed
+	//{
+	//	return hr;
+	//}
 	g_pModel3 = new Model(m_pD3DDevice, m_pImmediateContext);
 	hr = g_pModel3->LoadObjModel((char*)"assets/PointySphere.obj", 0);
 	if (FAILED(hr))//Return an error code if failed
@@ -190,7 +191,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 	{
 		return hr;
 	}
-	hr = g_pModel2->AddTexture((char*)"assets/texture.bmp");
+	//hr = g_pModel2->AddTexture((char*)"assets/texture.bmp");
 	if (FAILED(hr))
 	{
 		return hr;
@@ -210,21 +211,31 @@ HRESULT GameManager::InitialiseGraphics(void)
 	g_pParticleGenerator->setIsActive(true);
 	g_2DText = new Text2D("assets/font3.png", m_pD3DDevice, m_pImmediateContext);
 
-	g_pModel->SetZPos(10.0f);
-	g_pModel->SetXPos(10.0f);
+	g_root_node = new SceneNode();
+	g_node1 = new SceneNode();
+	g_node2 = new SceneNode();
 
-	g_pModel2->SetXPos(0.0f);
-	g_pModel2->SetYPos(-10.0f);
-	g_pModel2->SetZPos(0.0f);
-	g_pModel2->SetScale(100.0f);
+	g_node1->SetModel(g_pModel);
+	g_node2->SetModel(g_pModel3);
 
-	g_pModel3->SetXPos(-10.0f);
-	//g_pModel3->SetYPos(4.0f);
-	g_pModel2->SetZPos(10.0f);
-	g_pModel3->SetZPos(100.0f);
-	g_pModel3->SetScale(1.0f);
+	g_root_node->addChildNode(g_node1);
+	g_node1->addChildNode(g_node2);
 
-	pCamera->rotateInX(3);
+	//g_pModel->SetZPos(10.0f);
+	//g_pModel->SetXPos(10.0f);
+
+	//g_pModel2->SetXPos(0.0f);
+	//g_pModel2->SetYPos(-10.0f);
+	//g_pModel2->SetZPos(0.0f);
+	//g_pModel2->SetScale(100.0f);
+
+	//g_pModel3->SetXPos(-10.0f);
+	////g_pModel3->SetYPos(4.0f);
+	//g_pModel2->SetZPos(10.0f);
+	//g_pModel3->SetZPos(100.0f);
+	//g_pModel3->SetScale(1.0f);
+
+	//pCamera->rotateInX(3);
 	return hr;
 }
 
