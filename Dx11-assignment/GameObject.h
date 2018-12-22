@@ -10,6 +10,7 @@ public:
 	HRESULT CreateModel(char * ModelFilename, char * TextureFilename);
 	HRESULT CreateModel(char * ModelFilename, char * TextureFilename, char * TextureFilename2);
 	void update(XMMATRIX* view, XMMATRIX* projection);
+	void update(XMMATRIX * world, XMMATRIX* view, XMMATRIX* projection);
 	void setLightingValues(XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
 private:
 	ID3D11Device *			m_pD3DDevice;

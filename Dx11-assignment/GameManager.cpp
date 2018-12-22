@@ -125,6 +125,9 @@ void GameManager::RenderFrame(void)
 	g_pModel3->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel3->setAmbientLightColour(&g_ambient_light_colour);
+
+	g_node1->SetXPos(10.0f);
+	g_node2->SetYPos(10.0f);
 	g_root_node->execute(&world, &view2, &projection2);
 	//g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
 	//g_pModel3->moveForward(0.001f);
@@ -142,7 +145,7 @@ void GameManager::RenderFrame(void)
 	
 	//render text
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
-	//g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
+	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
 	g_2DText->RenderText();
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendDisable, 0, 0xfffffff);
 	// Display what has just been rendered

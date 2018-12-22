@@ -102,11 +102,18 @@ HRESULT ParticleGenerator::setupShader()
 	//CalculaterBoundingSphereRadius();
 
 	return hr;
+
+
 }
 
 void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * cameraPosition)
 {
-
+	Particle test;
+	test.color = XMFLOAT4(1.0f, 0.0f, 0.3f, 1.0f);
+	test.gravity = 1;
+	test.position = XMFLOAT3(0.0f, 3.0f, 14);
+	test.velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	DrawOne(&test, view, projection, cameraPosition);
 #pragma region MultiParticleDraw
 	UINT stride = sizeof(XMFLOAT3);
 	UINT offset = 0;
@@ -278,6 +285,8 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 	m_pImmediateContext->RSSetState(m_pRasterParticle);//set backface culling to on
 	m_pImmediateContext->Draw(6, 0);//draw the particle
 	m_pImmediateContext->RSSetState(m_pRasterSolid);//set backface culling to off
+
+
 }
 
 HRESULT ParticleGenerator::AddTexture(char* filename)
@@ -446,6 +455,7 @@ int ParticleGenerator::ParticleFactory()
 	/*CalcModelCentrePoint();
 	CalcBoundingSphereRadius();*/
 	setupShader();
+
 
 	return 0;
 

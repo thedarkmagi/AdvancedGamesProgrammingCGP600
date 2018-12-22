@@ -57,6 +57,11 @@ void GameObject::update(XMMATRIX* view, XMMATRIX* projection)
 	m_pModel->Draw(view, projection);
 }
 
+void GameObject::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection)
+{
+	m_pModel->Draw(world, view, projection);
+}
+
 void GameObject::setLightingValues(XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour)
 {
 	m_pModel->setDirectionLightVector(directionLightVector);
