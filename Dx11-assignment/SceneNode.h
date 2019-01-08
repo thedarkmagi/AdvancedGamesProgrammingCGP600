@@ -21,7 +21,9 @@ public:
 	void addChildNode(SceneNode *n);
 	bool detatchNode(SceneNode *n);
 	void execute(XMMATRIX *world, XMMATRIX* view, XMMATRIX* projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
-
+	void updateCollisionTree(XMMATRIX* world, float scale);
+	bool checkCollision(SceneNode* compare_tree);
+	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root);
 #pragma region Gets & Sets
 	void SetXPos(float num);
 	void SetYPos(float num);
@@ -30,6 +32,10 @@ public:
 	float GetXPos();
 	float GetYPos();
 	float GetZPos();
+
+	bool incX(float in, SceneNode* root_node);
+	bool incY(float in, SceneNode* root_node);
+	bool incZ(float in, SceneNode* root_node);
 
 	void SetXRot(float num);
 	void SetYRot(float num);
@@ -43,6 +49,7 @@ public:
 	float GetScale();
 	void SetModel(Model* m);
 	void SetGameObject(GameObject* m);
+	XMVECTOR getWorldCentrePosition();
 #pragma endregion
 private:
 	Model * m_pModel;
@@ -51,5 +58,6 @@ private:
 	float			m_x, m_y, m_z;
 	float			m_xAngle, m_yAngle, m_zAngle;
 	float			m_scale;
+	float			m_world_centre_x, m_world_centre_y, m_world_centre_z, m_world_scale;
 };
 

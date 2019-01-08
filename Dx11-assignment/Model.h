@@ -77,6 +77,7 @@ public:
 	void setdirectionalLightColour(XMVECTOR* lightColour);
 	void setAmbientLightColour(XMVECTOR* ambientLightColour);
 
+	XMVECTOR getBoundingSpherePos();
 	void SetSampler();
 	void SetTexture();
 #pragma endregion

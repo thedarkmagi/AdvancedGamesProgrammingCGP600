@@ -157,8 +157,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 {
 	HRESULT hr = S_OK;
 
-	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext);
-	m_LevelManager->ReadFromFile("assets/level.txt");
+	
 
 	g_pModel = new Model(m_pD3DDevice, m_pImmediateContext);
 	hr = g_pModel->LoadObjModel((char*)"assets/Sphere.obj",0);
@@ -229,6 +228,9 @@ HRESULT GameManager::InitialiseGraphics(void)
 	g_root_node->addChildNode(g_node1);
 	g_node1->addChildNode(g_node2);
 
+
+	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext, g_root_node);
+	m_LevelManager->ReadFromFile("assets/level.txt");
 	//g_pModel->SetZPos(10.0f);
 	//g_pModel->SetXPos(10.0f);
 

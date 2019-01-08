@@ -31,7 +31,7 @@ using namespace std;
 class LevelManager
 {
 public:
-	LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext);
+	LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext, SceneNode* rootNode);
 	~LevelManager();
 
 	void ReadFromFile(string input);
@@ -39,7 +39,7 @@ public:
 	void update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection);
 private:
 	vector<string> list;
-	//vector<SceneNode*> nodeHierarchy;
+	vector<SceneNode*> nodeHierarchy;
 	vector<GameObject*> gameObjectList;
 	SceneNode* m_rootNode;
 

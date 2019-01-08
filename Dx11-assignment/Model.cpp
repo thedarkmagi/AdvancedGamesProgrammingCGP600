@@ -547,6 +547,11 @@ void Model::setAmbientLightColour(XMVECTOR * ambientLightColour)
 	ambient_light_colour = ambientLightColour;
 }
 
+XMVECTOR Model::getBoundingSpherePos()
+{
+	return XMVectorSet(m_bounding_sphere_centre_x, m_bounding_sphere_centre_y, m_bounding_sphere_centre_z , 0.0);
+}
+
 #pragma endregion
 
 Model::~Model()

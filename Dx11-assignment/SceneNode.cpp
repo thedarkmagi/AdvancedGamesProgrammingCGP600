@@ -72,6 +72,106 @@ void SceneNode::execute(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection
 
 }
 
+void SceneNode::updateCollisionTree(XMMATRIX * world, float scale)
+{
+	// the local_world matrix will be used to calculate the local transformations for this node
+	XMMATRIX local_world = XMMatrixIdentity();
+
+	local_world = XMMatrixRotationX(XMConvertToRadians(m_xAngle));
+	local_world *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
+	local_world *= XMMatrixRotationZ(XMConvertToRadians(m_zAngle));
+
+	local_world *= XMMatrixScaling(m_scale, m_scale, m_scale);
+
+	local_world *= XMMatrixTranslation(m_x, m_y, m_z);
+
+	// the local matrix is multiplied by the passed in world matrix that contains the concatenated
+	// transformations of all parent nodes so that this nodes transformations are relative to those
+	local_world *= *world;
+
+	// calc the world space scale of this object, is needed to calculate the  
+	// correct bounding sphere radius of an object in a scaled hierarchy
+	m_world_scale = scale * m_scale;
+
+	XMVECTOR v;
+	if (m_pGameObject)
+	{
+		Model* temp = m_pGameObject->getModel();
+		v = temp->getBoundingSpherePos();
+	}
+	else v = XMVectorSet(0, 0, 0, 0); // no model, default to 0
+
+									  // find and store world space bounding sphere centre
+	v = XMVector3Transform(v, local_world);
+	m_world_centre_x = XMVectorGetX(v);
+	m_world_centre_y = XMVectorGetY(v);
+	m_world_centre_z = XMVectorGetZ(v);
+
+	// traverse all child nodes, passing in the concatenated world matrix and scale
+	for (int i = 0; i< m_children.size(); i++)
+	{
+		m_children[i]->updateCollisionTree(&local_world, m_world_scale);
+	}
+
+}
+
+bool SceneNode::checkCollision(SceneNode * compare_tree)
+{
+	return checkCollision(compare_tree, this);
+}
+
+bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree_root)
+{
+	// check to see if root of tree being compared is same as root node of object tree being checked
+	// i.e. stop object node and children being checked against each other
+	if (object_tree_root == compare_tree) return false;
+
+	// only check for collisions if both nodes contain a model
+	if (m_pGameObject && compare_tree->m_pGameObject)
+	{
+		XMVECTOR v1 = getWorldCentrePosition();
+		XMVECTOR v2 = compare_tree->getWorldCentrePosition();
+		XMVECTOR vdiff = v1 - v2;
+
+		//XMVECTOR a = XMVector3Length(vdiff);
+		float x1 = XMVectorGetX(v1);
+		float x2 = XMVectorGetX(v2);
+		float y1 = XMVectorGetY(v1);
+		float y2 = XMVectorGetY(v2);
+		float z1 = XMVectorGetZ(v1);
+		float z2 = XMVectorGetZ(v2);
+
+		float dx = x1 - x2;
+		float dy = y1 - y2;
+		float dz = z1 - z2;
+
+		// check bounding sphere collision
+		if (dx*dx + dy * dy + dz * dz <
+			(compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
+			(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
+		{
+			return true;
+		}
+	}
+
+	// iterate through compared tree child nodes
+	for (int i = 0; i< compare_tree->m_children.size(); i++)
+	{
+		// check for collsion against all compared tree child nodes 
+		if (checkCollision(compare_tree->m_children[i], object_tree_root) == true) return true;
+	}
+
+	// iterate through composite object child nodes
+	for (int i = 0; i< m_children.size(); i++)
+	{
+		// check all the child nodes of the composite object against compared tree
+		if (m_children[i]->checkCollision(compare_tree, object_tree_root) == true) return true;
+	}
+
+	return false;
+
+}
+
 #pragma region Gets & Sets
 void SceneNode::SetXPos(float num)
 {
@@ -101,6 +201,79 @@ float SceneNode::GetYPos()
 float SceneNode::GetZPos()
 {
 	return m_z;
+}
+
+bool SceneNode::incX(float in, SceneNode * root_node)
+{
+	float old_x = m_x;	// save current state 
+	m_x += in;		// update state
+
+	XMMATRIX identity = XMMatrixIdentity();
+
+	// since state has changed, need to update collision tree
+	// this basic system requires entire hirearchy to be updated
+	// so start at root node passing in identity matrix
+	root_node->updateCollisionTree(&identity, 1.0);
+
+	// check for collision of this node (and children) against all other nodes
+	if (checkCollision(root_node) == true)
+	{
+		// if collision restore state
+		m_x = old_x;
+
+		return true;
+	}
+
+	return false;
+
+}
+
+bool SceneNode::incY(float in, SceneNode * root_node)
+{
+	float old_y = m_y;	// save current state 
+	m_y += in;		// update state
+
+	XMMATRIX identity = XMMatrixIdentity();
+
+	// since state has changed, need to update collision tree
+	// this basic system requires entire hirearchy to be updated
+	// so start at root node passing in identity matrix
+	root_node->updateCollisionTree(&identity, 1.0);
+
+	// check for collision of this node (and children) against all other nodes
+	if (checkCollision(root_node) == true)
+	{
+		// if collision restore state
+		m_y = old_y;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool SceneNode::incZ(float in, SceneNode * root_node)
+{
+	float old_z = m_z;	// save current state 
+	m_z += in;		// update state
+
+	XMMATRIX identity = XMMatrixIdentity();
+
+	// since state has changed, need to update collision tree
+	// this basic system requires entire hirearchy to be updated
+	// so start at root node passing in identity matrix
+	root_node->updateCollisionTree(&identity, 1.0);
+
+	// check for collision of this node (and children) against all other nodes
+	if (checkCollision(root_node) == true)
+	{
+		// if collision restore state
+		m_z = old_z;
+
+		return true;
+	}
+
+	return false;
 }
 
 void SceneNode::SetXRot(float num)
@@ -149,5 +322,11 @@ void SceneNode::SetModel(Model * m)
 void SceneNode::SetGameObject(GameObject * m)
 {
 	m_pGameObject = m;
+}
+XMVECTOR SceneNode::getWorldCentrePosition()
+{
+	return XMVectorSet( m_world_centre_x,
+						m_world_centre_y,
+						m_world_centre_z, 0.0);
 }
 #pragma endregion

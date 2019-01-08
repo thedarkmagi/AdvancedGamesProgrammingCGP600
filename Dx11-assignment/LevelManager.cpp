@@ -2,10 +2,11 @@
 
 
 
-LevelManager::LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext)
+LevelManager::LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext, SceneNode* rootNode)
 {
 	m_pD3DDevice = device;
 	m_pImmediateContext = deviceContext;
+	m_rootNode = rootNode;
 }
 
 
@@ -30,7 +31,7 @@ void LevelManager::ReadFromFile(string input)
 		}
 		levelFile.close();
 
-		m_rootNode = new SceneNode();
+		//m_rootNode = new SceneNode();
 
 		for (int i = 0; i < list.size(); i++)
 		{
@@ -45,7 +46,7 @@ void LevelManager::ReadFromFile(string input)
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
 						temp->CreateModel((char*)"assets/cube.obj", (char*)"assets/texture.bmp");
 						//questionable if needed
-						gameObjectList.push_back(temp);
+						//gameObjectList.push_back(temp);
 						//tempNode->SetModel(temp->getModel());#
 						tempNode->SetGameObject(temp);
 						m_rootNode->addChildNode(tempNode);
@@ -55,6 +56,20 @@ void LevelManager::ReadFromFile(string input)
 					case 'b':
 
 						break;
+					case 'e':
+						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
+						temp->CreateModel((char*)"assets/Sphere.obj", (char*)"assets/texture.bmp");
+						gameObjectList.push_back(temp);
+						
+						//tempNode->SetModel(temp->getModel());#
+						tempNode->SetGameObject(temp);
+						m_rootNode->addChildNode(tempNode);
+						tempNode->SetXPos(i * 2);
+						tempNode->SetZPos(j * 2);
+						tempNode->SetScale(0.2f);
+						nodeHierarchy.push_back(tempNode);
+						break;
+
 					default:
 						break;
 				}
@@ -66,11 +81,15 @@ void LevelManager::ReadFromFile(string input)
 
 void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour)
 {
-	/*for (int i = 0; i < gameObjectList.size(); i++)
+	//for (int i = 0; i < gameObjectList.size(); i++)
+	//{
+	//	gameObjectList[i]->setLightingValues(directionLightVector, lightColour, ambientLightColour);
+	//	gameObjectList[i]->update(world, view, projection);
+	//}
+	for (int i = 0; i < nodeHierarchy.size(); i++)
 	{
-		gameObjectList[i]->setLightingValues(directionLightVector, lightColour, ambientLightColour);
-		gameObjectList[i]->update(world, view, projection);
-	}*/
+		nodeHierarchy[i]->incX(1*GameTimer::getInstance()->DeltaTime(), m_rootNode);
+	}
 	m_rootNode->execute(world, view, projection, directionLightVector, lightColour, ambientLightColour);
 }
 
