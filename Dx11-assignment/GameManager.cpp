@@ -155,6 +155,10 @@ void GameManager::RenderFrame(void)
 HRESULT GameManager::InitialiseGraphics(void)
 {
 	HRESULT hr = S_OK;
+
+	m_LevelManager = new LevelManager();
+	m_LevelManager->ReadFromFile("assets/level.txt");
+
 	g_pModel = new Model(m_pD3DDevice, m_pImmediateContext);
 	hr = g_pModel->LoadObjModel((char*)"assets/Sphere.obj",0);
 	if (FAILED(hr))//Return an error code if failed

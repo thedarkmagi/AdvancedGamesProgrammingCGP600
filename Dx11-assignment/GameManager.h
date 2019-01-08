@@ -19,6 +19,7 @@
 #include "GameObject.h"
 #include "ParticleGenerator.h"
 #include "SceneNode.h"
+#include "LevelManager.h"
 class GameManager
 {
 public:
@@ -69,6 +70,8 @@ private:
 	SceneNode* g_root_node;
 	SceneNode* g_node1;
 	SceneNode* g_node2;
+
+	LevelManager* m_LevelManager;
 
 };
 

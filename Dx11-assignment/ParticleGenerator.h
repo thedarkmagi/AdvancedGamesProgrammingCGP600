@@ -60,7 +60,6 @@ public:
 	~ParticleGenerator();
 
 	HRESULT setupShader();
-	void Draw(XMMATRIX* view, XMMATRIX* projection);
 	void Draw(XMMATRIX* view, XMMATRIX* projection, XMVECTOR* cameraPosition);
 	void DrawOne(Particle* one, XMMATRIX* view, XMMATRIX* projection, XMVECTOR* cameraPosition);
 	HRESULT AddTexture(char* filename);
