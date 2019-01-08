@@ -73,7 +73,7 @@ void GameManager::RenderFrame(void)
 
 
 	//g_2DText->AddText(to_string( GameTimer::getInstance()->GameTime()), -1.0, +1.0,  16/9 *0.2);
-	g_2DText->AddText("Well Sure good luck", -1.0, +1.0, 16 / 9 * 0.1);
+	g_2DText->AddText("good luck"+ std::to_string((int)(1.0f/GameTimer::getInstance()->DeltaTime())), -1.0, +1.0, 16 / 9 * 0.1);
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 	m_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);

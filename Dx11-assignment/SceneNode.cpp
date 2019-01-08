@@ -172,6 +172,51 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 
 }
 
+bool SceneNode::lookAt_XZ(float x, float z)
+{
+	float dx = x - m_x;
+	float dz = z - m_z;
+
+	m_yAngle = atan2(dx, dz) *(180.0 / XM_PI);
+	return false;
+}
+
+bool SceneNode::lookAt_XZ(float x, float z, SceneNode * root_node)
+{
+	return false;
+}
+
+bool SceneNode::moveForward(float amount)
+{
+	m_x += sin(m_yAngle * (XM_PI / 180.0)) * amount;
+	m_z += cos(m_yAngle * (XM_PI / 180.0)) * amount;
+	return false;
+}
+
+bool SceneNode::moveForward(float amount, SceneNode * root_node)
+{
+	float old_x = m_x;	// save current state 
+	m_x += amount;		// update state
+
+	XMMATRIX identity = XMMatrixIdentity();
+
+	// since state has changed, need to update collision tree
+	// this basic system requires entire hirearchy to be updated
+	// so start at root node passing in identity matrix
+	root_node->updateCollisionTree(&identity, 1.0);
+
+	// check for collision of this node (and children) against all other nodes
+	if (checkCollision(root_node) == true)
+	{
+		// if collision restore state
+		m_x = old_x;
+
+		return true;
+	}
+
+	return false;
+}
+
 #pragma region Gets & Sets
 void SceneNode::SetXPos(float num)
 {

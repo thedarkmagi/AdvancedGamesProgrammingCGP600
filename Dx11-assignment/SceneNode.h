@@ -24,6 +24,11 @@ public:
 	void updateCollisionTree(XMMATRIX* world, float scale);
 	bool checkCollision(SceneNode* compare_tree);
 	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root);
+
+	bool lookAt_XZ(float x, float z);
+	bool lookAt_XZ(float x, float z, SceneNode* root_node);
+	bool moveForward(float amount);
+	bool moveForward(float amount, SceneNode* root_node);
 #pragma region Gets & Sets
 	void SetXPos(float num);
 	void SetYPos(float num);
