@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "Model.h"
+#include "GameObject.h"
 class SceneNode
 {
 public:
@@ -19,7 +20,7 @@ public:
 
 	void addChildNode(SceneNode *n);
 	bool detatchNode(SceneNode *n);
-	void execute(XMMATRIX *world, XMMATRIX* view, XMMATRIX* projection);
+	void execute(XMMATRIX *world, XMMATRIX* view, XMMATRIX* projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
 
 #pragma region Gets & Sets
 	void SetXPos(float num);
@@ -41,9 +42,11 @@ public:
 	void SetScale(float num);
 	float GetScale();
 	void SetModel(Model* m);
+	void SetGameObject(GameObject* m);
 #pragma endregion
 private:
 	Model * m_pModel;
+	GameObject * m_pGameObject;
 	vector<SceneNode*> m_children;
 	float			m_x, m_y, m_z;
 	float			m_xAngle, m_yAngle, m_zAngle;

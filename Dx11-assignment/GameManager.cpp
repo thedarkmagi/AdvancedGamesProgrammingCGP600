@@ -128,7 +128,7 @@ void GameManager::RenderFrame(void)
 
 	g_node1->SetXPos(10.0f);
 	g_node2->SetYPos(10.0f);
-	g_root_node->execute(&world, &view2, &projection2);
+	g_root_node->execute(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
 	//g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
 	//g_pModel3->moveForward(0.001f);
 
@@ -142,7 +142,8 @@ void GameManager::RenderFrame(void)
 	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	//g_pGameObject->update(&view2, &projection2);
 	//g_pParticleGenerator->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	
+	m_LevelManager->update(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
+	//m_LevelManager->update(&world, &view2, &projection2);
 	//render text
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
 	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
@@ -156,7 +157,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 {
 	HRESULT hr = S_OK;
 
-	m_LevelManager = new LevelManager();
+	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext);
 	m_LevelManager->ReadFromFile("assets/level.txt");
 
 	g_pModel = new Model(m_pD3DDevice, m_pImmediateContext);

@@ -40,7 +40,7 @@ bool SceneNode::detatchNode(SceneNode * n)
 
 }
 
-void SceneNode::execute(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection)
+void SceneNode::execute(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour)
 {
 	// the local_world matrix will be used to calc the local transformations for this node
 	XMMATRIX local_world = XMMatrixIdentity();
@@ -59,11 +59,15 @@ void SceneNode::execute(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection
 
 	// only draw if there is a model attached
 	if (m_pModel) m_pModel->Draw(&local_world, view, projection);
-
+	if (m_pGameObject)
+	{
+		m_pGameObject->setLightingValues(directionLightVector, lightColour, ambientLightColour);
+		m_pGameObject->update(&local_world, view, projection);
+	}
 	// traverse all child nodes, passing in the concatenated world matrix
 	for (int i = 0; i< m_children.size(); i++)
 	{
-		m_children[i]->execute(&local_world, view, projection);
+		m_children[i]->execute(&local_world, view, projection, directionLightVector, lightColour, ambientLightColour);
 	}
 
 }
@@ -141,5 +145,9 @@ float SceneNode::GetScale()
 void SceneNode::SetModel(Model * m)
 { 
 	m_pModel = m;
+}
+void SceneNode::SetGameObject(GameObject * m)
+{
+	m_pGameObject = m;
 }
 #pragma endregion

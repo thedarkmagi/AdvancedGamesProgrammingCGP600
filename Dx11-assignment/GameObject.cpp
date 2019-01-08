@@ -68,3 +68,8 @@ void GameObject::setLightingValues(XMVECTOR * directionLightVector, XMVECTOR * l
 	m_pModel->setdirectionalLightColour(lightColour);
 	m_pModel->setAmbientLightColour(ambientLightColour);
 }
+
+Model* GameObject::getModel()
+{
+	return m_pModel;
+}

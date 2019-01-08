@@ -12,6 +12,7 @@ public:
 	void update(XMMATRIX* view, XMMATRIX* projection);
 	void update(XMMATRIX * world, XMMATRIX* view, XMMATRIX* projection);
 	void setLightingValues(XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
+	Model* getModel();
 private:
 	ID3D11Device *			m_pD3DDevice;
 	ID3D11DeviceContext*	m_pImmediateContext;
