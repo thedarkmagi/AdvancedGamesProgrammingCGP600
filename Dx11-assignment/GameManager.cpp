@@ -46,18 +46,95 @@ void GameManager::RenderFrame(void)
 	if (g_pInput->IsKeyPressed(DIK_W))
 	{
 		pCamera->forward(0.002f);
+		// set camera node to the position of the camera
+		g_cam_node->SetXPos(pCamera->getX());
+		g_cam_node->SetYPos(pCamera->getY());
+		g_cam_node->SetZPos(pCamera->getZ());
+
+		XMMATRIX identity = XMMatrixIdentity();
+
+		// update tree to reflect new camera position
+		g_root_node->updateCollisionTree(&identity, 1.0);
+
+		if (g_cam_node->checkCollision(g_root_node) == true)
+		{
+			// if there is a collision, restore camera and camera node positions
+			pCamera->forward(-0.002f);
+			g_cam_node->SetXPos(pCamera->getX()); //15
+			g_cam_node->SetYPos(pCamera->getY());//15
+			g_cam_node->SetZPos(pCamera->getZ());//15
+
+		}
+
 	}
 	if (g_pInput->IsKeyPressed(DIK_S))
 	{
 		pCamera->forward(-0.002f);
+		// set camera node to the position of the camera
+		g_cam_node->SetXPos(pCamera->getX());
+		g_cam_node->SetYPos(pCamera->getY());
+		g_cam_node->SetZPos(pCamera->getZ());
+
+		XMMATRIX identity = XMMatrixIdentity();
+
+		// update tree to reflect new camera position
+		g_root_node->updateCollisionTree(&identity, 1.0);
+
+		if (g_cam_node->checkCollision(g_root_node) == true)
+		{
+			// if there is a collision, restore camera and camera node positions
+			pCamera->forward(0.002f);
+			g_cam_node->SetXPos(pCamera->getX()); //15
+			g_cam_node->SetYPos(pCamera->getY());//15
+			g_cam_node->SetZPos(pCamera->getZ());//15
+
+		}
 	}
 	if (g_pInput->IsKeyPressed(DIK_A))
 	{
 		pCamera->strafe(-0.002f);
+		// set camera node to the position of the camera
+		g_cam_node->SetXPos(pCamera->getX());
+		g_cam_node->SetYPos(pCamera->getY());
+		g_cam_node->SetZPos(pCamera->getZ());
+
+		XMMATRIX identity = XMMatrixIdentity();
+
+		// update tree to reflect new camera position
+		g_root_node->updateCollisionTree(&identity, 1.0);
+
+		if (g_cam_node->checkCollision(g_root_node) == true)
+		{
+			// if there is a collision, restore camera and camera node positions
+			pCamera->strafe(0.002f);
+			g_cam_node->SetXPos(pCamera->getX()); //15
+			g_cam_node->SetYPos(pCamera->getY());//15
+			g_cam_node->SetZPos(pCamera->getZ());//15
+
+		}
 	}
 	if (g_pInput->IsKeyPressed(DIK_D))
 	{
 		pCamera->strafe(0.002f);
+		// set camera node to the position of the camera
+		g_cam_node->SetXPos(pCamera->getX());
+		g_cam_node->SetYPos(pCamera->getY());
+		g_cam_node->SetZPos(pCamera->getZ());
+
+		XMMATRIX identity = XMMatrixIdentity();
+
+		// update tree to reflect new camera position
+		g_root_node->updateCollisionTree(&identity, 1.0);
+
+		if (g_cam_node->checkCollision(g_root_node) == true)
+		{
+			// if there is a collision, restore camera and camera node positions
+			pCamera->strafe(-0.002f);
+			g_cam_node->SetXPos(pCamera->getX()); //15
+			g_cam_node->SetYPos(pCamera->getY());//15
+			g_cam_node->SetZPos(pCamera->getZ());//15
+
+		}
 	}
 	pCamera->rotate(g_pInput->GetMouseX());
 	pCamera->rotateInX(g_pInput->GetMouseY());
@@ -220,18 +297,22 @@ HRESULT GameManager::InitialiseGraphics(void)
 	g_pParticleGenerator->setIsActive(true);
 	g_2DText = new Text2D("assets/font3.png", m_pD3DDevice, m_pImmediateContext);
 
+	g_camObject = new GameObject(m_pD3DDevice, m_pImmediateContext);
+	g_camObject->CreateModel((char*)"assets/Sphere.obj", (char*)"assets/texture.bmp");
+
 	g_root_node = new SceneNode();
 	g_node1 = new SceneNode();
 	g_node2 = new SceneNode();
-
+	g_cam_node = new SceneNode();
 	g_node1->SetModel(g_pModel);
 	g_node2->SetModel(g_pModel3);
+	g_cam_node->SetGameObject(g_camObject);
 
 	g_root_node->addChildNode(g_node1);
 	g_node1->addChildNode(g_node2);
+	g_root_node->addChildNode(g_cam_node);
 
-
-	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext, g_root_node);
+	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext, g_root_node, g_cam_node);
 	m_LevelManager->ReadFromFile("assets/level.txt");
 	//g_pModel->SetZPos(10.0f);
 	//g_pModel->SetXPos(10.0f);
@@ -246,6 +327,10 @@ HRESULT GameManager::InitialiseGraphics(void)
 	//g_pModel2->SetZPos(10.0f);
 	//g_pModel3->SetZPos(100.0f);
 	//g_pModel3->SetScale(1.0f);
+	pCamera->strafe(-1);
+	g_cam_node->SetXPos(pCamera->getX()); //15
+	g_cam_node->SetYPos(pCamera->getY());//15
+	g_cam_node->SetZPos(pCamera->getZ());//15
 
 	//pCamera->rotateInX(3);
 	return hr;

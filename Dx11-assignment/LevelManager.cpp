@@ -2,11 +2,13 @@
 
 
 
-LevelManager::LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext, SceneNode* rootNode)
+LevelManager::LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext, SceneNode* rootNode, SceneNode* camNode)
 {
 	m_pD3DDevice = device;
 	m_pImmediateContext = deviceContext;
 	m_rootNode = rootNode;
+	m_camNode = camNode;
+	//m_rootNode->addChildNode(m_camNode);
 }
 
 
@@ -53,8 +55,16 @@ void LevelManager::ReadFromFile(string input)
 						tempNode->SetXPos(i*2);
 						tempNode->SetZPos(j*2);
 						break;
-					case 'b':
-
+					case 'c':
+						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
+						temp->CreateModel((char*)"assets/cube.obj", (char*)"assets/texture.bmp");
+						//questionable if needed
+						//gameObjectList.push_back(temp);
+						//tempNode->SetModel(temp->getModel());#
+						tempNode->SetGameObject(temp);
+						m_rootNode->addChildNode(tempNode);
+						tempNode->SetXPos(i * 2);
+						tempNode->SetZPos(j * 2);
 						break;
 					case 'e':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);

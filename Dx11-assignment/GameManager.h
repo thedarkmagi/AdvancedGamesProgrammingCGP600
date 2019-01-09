@@ -70,6 +70,8 @@ private:
 	SceneNode* g_root_node;
 	SceneNode* g_node1;
 	SceneNode* g_node2;
+	SceneNode* g_cam_node;
+	GameObject* g_camObject;
 
 	LevelManager* m_LevelManager;
 

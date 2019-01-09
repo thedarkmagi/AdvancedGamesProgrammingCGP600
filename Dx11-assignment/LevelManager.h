@@ -31,7 +31,7 @@ using namespace std;
 class LevelManager
 {
 public:
-	LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext, SceneNode* rootNode);
+	LevelManager(ID3D11Device * device, ID3D11DeviceContext * deviceContext, SceneNode* rootNode, SceneNode* camNode);
 	~LevelManager();
 
 	void ReadFromFile(string input);
@@ -44,7 +44,7 @@ private:
 	vector<SceneNode*> nodeHierarchy;
 	vector<GameObject*> gameObjectList;
 	SceneNode* m_rootNode;
-
+	SceneNode* m_camNode;
 	ID3D11Device *			m_pD3DDevice;
 	ID3D11DeviceContext*	m_pImmediateContext;
 
