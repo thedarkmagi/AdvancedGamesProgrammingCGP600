@@ -196,7 +196,9 @@ bool SceneNode::moveForward(float amount)
 bool SceneNode::moveForward(float amount, SceneNode * root_node)
 {
 	float old_x = m_x;	// save current state 
-	m_x += amount;		// update state
+	float old_z = m_z;	// save current state 
+	m_x += sin(m_yAngle * (XM_PI / 180.0)) * amount;
+	m_z += cos(m_yAngle * (XM_PI / 180.0)) * amount;		// update state
 
 	XMMATRIX identity = XMMatrixIdentity();
 
@@ -210,7 +212,7 @@ bool SceneNode::moveForward(float amount, SceneNode * root_node)
 	{
 		// if collision restore state
 		m_x = old_x;
-
+		m_z = old_z;
 		return true;
 	}
 

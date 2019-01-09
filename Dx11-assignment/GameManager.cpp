@@ -142,6 +142,8 @@ void GameManager::RenderFrame(void)
 	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
 	//g_pGameObject->update(&view2, &projection2);
 	//g_pParticleGenerator->lookAt_XZ(pCamera->getX(), pCamera->getZ());
+
+	m_LevelManager->passCameraPos(pCamera->getX(), pCamera->getZ());
 	m_LevelManager->update(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
 	//m_LevelManager->update(&world, &view2, &projection2);
 	//render text

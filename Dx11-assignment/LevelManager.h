@@ -37,6 +37,8 @@ public:
 	void ReadFromFile(string input);
 	void update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
 	void update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection);
+
+	void passCameraPos(float x, float z);
 private:
 	vector<string> list;
 	vector<SceneNode*> nodeHierarchy;
@@ -45,5 +47,8 @@ private:
 
 	ID3D11Device *			m_pD3DDevice;
 	ID3D11DeviceContext*	m_pImmediateContext;
+
+	//temp VALUES PLEASE REPLACE LATER
+	float cameraX, cameraZ;
 };
 

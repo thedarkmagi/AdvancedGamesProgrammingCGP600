@@ -88,7 +88,9 @@ void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projecti
 	//}
 	for (int i = 0; i < nodeHierarchy.size(); i++)
 	{
-		nodeHierarchy[i]->incX(1*GameTimer::getInstance()->DeltaTime(), m_rootNode);
+		//nodeHierarchy[i]->incX(1*GameTimer::getInstance()->DeltaTime(), m_rootNode);
+		nodeHierarchy[i]->lookAt_XZ(cameraX, cameraZ);
+		nodeHierarchy[i]->moveForward(1 * GameTimer::getInstance()->DeltaTime(), m_rootNode);
 	}
 	m_rootNode->execute(world, view, projection, directionLightVector, lightColour, ambientLightColour);
 }
@@ -96,4 +98,10 @@ void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projecti
 void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection)
 {
 	
+}
+
+void LevelManager::passCameraPos(float x, float z)
+{
+	cameraX = x;
+	cameraZ = z;
 }
