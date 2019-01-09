@@ -49,3 +49,18 @@ ObjFileModel::xyz maths::normal(ObjFileModel::xyz * v1, ObjFileModel::xyz * v2, 
 
 	return crossed;
 }
+
+maths::Plane maths::planeEquation(ObjFileModel::xyz * v1, ObjFileModel::xyz * v2, ObjFileModel::xyz * v3)
+{
+	Plane planeLocal;
+	planeLocal.normal = normal(v1, v2, v3);
+	planeLocal.d = -dot(&planeLocal.normal, v1);
+	return planeLocal;
+}
+
+float maths::comparePlaneToPoint(Plane plane, ObjFileModel::xyz point)
+{
+
+	float result = (plane.normal.x * point.x) + (plane.normal.y * point.y) + (plane.normal.z * point.z) + d;
+	return result;
+}
