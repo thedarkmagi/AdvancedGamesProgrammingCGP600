@@ -71,5 +71,12 @@ void GameObject::setLightingValues(XMVECTOR * directionLightVector, XMVECTOR * l
 
 Model* GameObject::getModel()
 {
-	return m_pModel;
+	if (!m_pModel)
+	{	
+		return NULL;
+	}
+	else
+	{
+		return m_pModel;
+	}
 }

@@ -38,25 +38,44 @@ GameManager::~GameManager()
 void GameManager::RenderFrame(void)
 {
 	g_pInput->ReadInputStates();
-
+	XMMATRIX identity = XMMatrixIdentity();
+	g_root_node->updateCollisionTree(&identity, 1.0);
 	if (g_pInput->IsKeyPressed(DIK_ESCAPE))
 	{
 		DestroyWindow(*g_hWnd);
 	}
 	if (g_pInput->IsKeyPressed(DIK_W))
 	{
+		ObjFileModel::xyz oldPos;
+		oldPos.x = pCamera->getX();
+		oldPos.y = pCamera->getY();
+		oldPos.z = pCamera->getZ();
 		pCamera->forward(0.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
 		g_cam_node->SetZPos(pCamera->getZ());
 
+		ObjFileModel::xyz newPos;
+		newPos.x = pCamera->getX();
+		newPos.y = pCamera->getY();
+		newPos.z = pCamera->getZ();
+
 		XMMATRIX identity = XMMatrixIdentity();
 
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
-		if (g_cam_node->checkCollision(g_root_node) == true)
+		//if (g_cam_node->checkCollision(g_root_node) == true)
+		//{
+		//	// if there is a collision, restore camera and camera node positions
+		//	pCamera->forward(-0.002f);
+		//	g_cam_node->SetXPos(pCamera->getX()); //15
+		//	g_cam_node->SetYPos(pCamera->getY());//15
+		//	g_cam_node->SetZPos(pCamera->getZ());//15
+
+		//}
+		if (g_cam_node->checkCollisionRay(&oldPos, &newPos, g_root_node) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
 			pCamera->forward(-0.002f);
@@ -69,22 +88,41 @@ void GameManager::RenderFrame(void)
 	}
 	if (g_pInput->IsKeyPressed(DIK_S))
 	{
+		ObjFileModel::xyz oldPos;
+		oldPos.x = pCamera->getX();
+		oldPos.y = pCamera->getY();
+		oldPos.z = pCamera->getZ();
+
 		pCamera->forward(-0.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
 		g_cam_node->SetZPos(pCamera->getZ());
 
+		ObjFileModel::xyz newPos;
+		newPos.x = pCamera->getX();
+		newPos.y = pCamera->getY();
+		newPos.z = pCamera->getZ();
+
 		XMMATRIX identity = XMMatrixIdentity();
 
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
-		if (g_cam_node->checkCollision(g_root_node) == true)
+		//if (g_cam_node->checkCollision(g_root_node) == true)
+		//{
+		//	// if there is a collision, restore camera and camera node positions
+		//	pCamera->forward(0.002f);
+		//	g_cam_node->SetXPos(pCamera->getX()); //15
+		//	g_cam_node->SetYPos(pCamera->getY());//15
+		//	g_cam_node->SetZPos(pCamera->getZ());//15
+
+		//}
+		if (g_cam_node->checkCollisionRay(&oldPos, &newPos, g_root_node) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
 			pCamera->forward(0.002f);
-			g_cam_node->SetXPos(pCamera->getX()); //15
+			g_cam_node->SetXPos(pCamera->getX());//15
 			g_cam_node->SetYPos(pCamera->getY());//15
 			g_cam_node->SetZPos(pCamera->getZ());//15
 
@@ -162,6 +200,7 @@ void GameManager::RenderFrame(void)
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
 	view2 = pCamera->GetViewMatix();
 	g_pSkybox->Draw(&view2, &projection2);
+	
 	//Some things I need to work out
 	//m_pImmediateContext->VSSetShader(g_pVertexShader, 0, 0);
 	//m_pImmediateContext->PSSetShader(g_pPixelShader, 0, 0);
@@ -203,8 +242,8 @@ void GameManager::RenderFrame(void)
 	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel3->setAmbientLightColour(&g_ambient_light_colour);
 
-	g_node1->SetXPos(10.0f);
-	g_node2->SetYPos(10.0f);
+	/*g_node1->SetXPos(10.0f);
+	g_node2->SetYPos(10.0f);*/
 	g_root_node->execute(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
 	//g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
 	//g_pModel3->moveForward(0.001f);
@@ -301,15 +340,15 @@ HRESULT GameManager::InitialiseGraphics(void)
 	g_camObject->CreateModel((char*)"assets/Sphere.obj", (char*)"assets/texture.bmp");
 
 	g_root_node = new SceneNode();
-	g_node1 = new SceneNode();
-	g_node2 = new SceneNode();
+	//g_node1 = new SceneNode();
+	//g_node2 = new SceneNode();
 	g_cam_node = new SceneNode();
-	g_node1->SetModel(g_pModel);
-	g_node2->SetModel(g_pModel3);
+	//g_node1->SetModel(g_pModel);
+	//g_node2->SetModel(g_pModel3);
 	g_cam_node->SetGameObject(g_camObject);
 
-	g_root_node->addChildNode(g_node1);
-	g_node1->addChildNode(g_node2);
+	//g_root_node->addChildNode(g_node1);
+	//g_node1->addChildNode(g_node2);
 	g_root_node->addChildNode(g_cam_node);
 
 	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext, g_root_node, g_cam_node);

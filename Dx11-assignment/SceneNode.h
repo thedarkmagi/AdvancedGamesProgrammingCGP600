@@ -25,7 +25,7 @@ public:
 	void updateCollisionTree(XMMATRIX* world, float scale);
 	bool checkCollision(SceneNode* compare_tree);
 	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root);
-	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, SceneNode* object_tree_root);
+	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree);
 	bool lookAt_XZ(float x, float z);
 	bool lookAt_XZ(float x, float z, SceneNode* root_node);
 	bool moveForward(float amount);
@@ -58,6 +58,7 @@ public:
 	XMVECTOR getWorldCentrePosition();
 
 	ObjFileModel::xyz XMVecToXYZ(XMVECTOR input);
+	XMVECTOR XYZToXMVec(ObjFileModel::xyz* input);
 	ObjFileModel::xyz addTogether(ObjFileModel::xyz* one, ObjFileModel::xyz* two);
 #pragma endregion
 private:

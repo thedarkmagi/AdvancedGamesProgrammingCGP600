@@ -175,52 +175,54 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 
 }
 
-bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, SceneNode * object_tree_root)
+bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree)
 {
 	if (m_pGameObject)
 	{
-		if (m_pGameObject->getModel())
+		if (m_pGameObject->getModel()!=NULL)
 		{
 			ObjFileModel::xyz dist;
 			dist.x = ray->x - XMVectorGetX(getWorldCentrePosition());
 			dist.y = ray->y - XMVectorGetY(getWorldCentrePosition());
 			dist.z = ray->z - XMVectorGetZ(getWorldCentrePosition());
-
-			if (dist.x*dist.x + dist.y * dist.y + dist.z*dist.z > (compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
-				(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
+			if (compare_tree->m_pGameObject)
 			{
-				for (int i = 0; i < m_pGameObject->getModel()->getObject()->numverts; i += 3)
+				if (dist.x*dist.x + dist.y * dist.y + dist.z*dist.z > (compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
+					(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
 				{
-					XMVECTOR p1 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
-						m_pGameObject->getModel()->getObject()->vertices[i].Pos.y,
-						m_pGameObject->getModel()->getObject()->vertices[i].Pos.z, 0.0f);
-					XMVECTOR p2 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.x,
-						m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.y,
-						m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.z, 0.0f);
-					XMVECTOR p3 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.x,
-						m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.y,
-						m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.z, 0.0f);
-
-					p1 = XMVector3Transform(p1, m_local_world_matrix);
-					p2 = XMVector3Transform(p2, m_local_world_matrix);
-					p3 = XMVector3Transform(p3, m_local_world_matrix);
-					
-					maths::Plane plane = localMath->planeEquation(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3));
-					float startOfRay = localMath->comparePlaneToPoint(plane, *ray);
-					float endOfRay = localMath->comparePlaneToPoint(plane, addTogether(ray, rayDirection));
-					if (localMath->sign(startOfRay) > 0 && localMath->sign(endOfRay) < 0 || localMath->sign(startOfRay) < 0 && localMath->sign(endOfRay) > 0)
+					for (int i = 0; i < m_pGameObject->getModel()->getObject()->numverts; i += 3)
 					{
-						ObjFileModel::xyz intersectionPoint = localMath->planeIntersection(&plane, ray, &addTogether(ray, rayDirection));
-						if (localMath->in_triangle(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3), &intersectionPoint))
+						XMVECTOR p1 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
+							m_pGameObject->getModel()->getObject()->vertices[i].Pos.y,
+							m_pGameObject->getModel()->getObject()->vertices[i].Pos.z, 0.0f);
+						XMVECTOR p2 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.x,
+							m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.y,
+							m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.z, 0.0f);
+						XMVECTOR p3 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.x,
+							m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.y,
+							m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.z, 0.0f);
+
+						p1 = XMVector3Transform(p1, m_local_world_matrix);
+						p2 = XMVector3Transform(p2, m_local_world_matrix);
+						p3 = XMVector3Transform(p3, m_local_world_matrix);
+
+						maths::Plane plane = localMath->planeEquation(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3));
+						float startOfRay = localMath->comparePlaneToPoint(plane, *ray);
+						float endOfRay = localMath->comparePlaneToPoint(plane, addTogether(ray, rayDirection));
+						if (localMath->sign(startOfRay) > 0 && localMath->sign(endOfRay) < 0 || localMath->sign(startOfRay) < 0 && localMath->sign(endOfRay) > 0)
 						{
-							return true;
+							ObjFileModel::xyz intersectionPoint = localMath->planeIntersection(&plane, ray, &addTogether(ray, rayDirection));
+							if (localMath->in_triangle(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3), &intersectionPoint))
+							{
+								//return true;
+							}
 						}
 					}
-				}
-			}//
+				}//
+			}
 			for (int i = 0; i< m_children.size(); i++)
 			{
-				if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree, object_tree_root))
+				if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
 				{
 					return true; // not sure if this should be there? or if this would ever do anything
 				}
@@ -442,6 +444,10 @@ ObjFileModel::xyz SceneNode::XMVecToXYZ(XMVECTOR input)
 	output.y = XMVectorGetY(input);
 	output.z = XMVectorGetZ(input);
 	return output;
+}
+XMVECTOR SceneNode::XYZToXMVec(ObjFileModel::xyz* input)
+{
+	return XMVectorSet(input->x, input->y, input->z, 0.0);
 }
 ObjFileModel::xyz SceneNode::addTogether(ObjFileModel::xyz * one, ObjFileModel::xyz * two)
 {
