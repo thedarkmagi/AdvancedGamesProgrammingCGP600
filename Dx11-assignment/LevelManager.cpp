@@ -100,7 +100,7 @@ void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projecti
 	{
 		//nodeHierarchy[i]->incX(1*GameTimer::getInstance()->DeltaTime(), m_rootNode);
 		nodeHierarchy[i]->lookAt_XZ(cameraX, cameraZ);
-		nodeHierarchy[i]->moveForward(1 * GameTimer::getInstance()->DeltaTime(), m_rootNode);
+		//nodeHierarchy[i]->moveForward(1 * GameTimer::getInstance()->DeltaTime(), m_rootNode);
 	}
 	m_rootNode->execute(world, view, projection, directionLightVector, lightColour, ambientLightColour);
 }

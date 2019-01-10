@@ -12,7 +12,7 @@ SceneNode::SceneNode()
 	m_yAngle = 0.0f;
 	m_zAngle = 0.0f;
 	m_scale = 1.0f;
-
+	//m_children
 	// should probably change this to a static class but oh well 
 	localMath = new maths();
 }
@@ -177,14 +177,22 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 
 bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree)
 {
+	return checkCollisionRay(ray, rayDirection, compare_tree, this);
+}
+
+bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, SceneNode* object_tree_root)
+{
+	if (compare_tree == object_tree_root) return false;
+
 	if (m_pGameObject)
 	{
-		if (m_pGameObject->getModel()!=NULL)
+		if (m_pGameObject->getModel())
 		{
 			ObjFileModel::xyz dist;
-			dist.x = ray->x - XMVectorGetX(getWorldCentrePosition());
-			dist.y = ray->y - XMVectorGetY(getWorldCentrePosition());
-			dist.z = ray->z - XMVectorGetZ(getWorldCentrePosition());
+			// multiplier allows distance to be long enough to actually allow collision to happen
+			dist.x = (ray->x - XMVectorGetX(getWorldCentrePosition())) * 2;
+			dist.y = (ray->y - XMVectorGetY(getWorldCentrePosition())) * 2;
+			dist.z = (ray->z - XMVectorGetZ(getWorldCentrePosition())) * 2;
 			if (compare_tree->m_pGameObject)
 			{
 				if (dist.x*dist.x + dist.y * dist.y + dist.z*dist.z > (compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
@@ -214,21 +222,35 @@ bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * r
 							ObjFileModel::xyz intersectionPoint = localMath->planeIntersection(&plane, ray, &addTogether(ray, rayDirection));
 							if (localMath->in_triangle(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3), &intersectionPoint))
 							{
-								//return true;
+								return true;
 							}
 						}
 					}
 				}//
 			}
-			for (int i = 0; i< m_children.size(); i++)
-			{
-				if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
-				{
-					return true; // not sure if this should be there? or if this would ever do anything
-				}
-			}
+			
 		}
 	}
+	if (!m_children.empty() )
+			{
+				for (int i = 0; i < m_children.size(); i++)
+				{
+					if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
+					{
+						return true; // not sure if this should be there? or if this would ever do anything
+					}
+				}
+			}
+			if (!compare_tree->m_children.empty())// & *compare_tree->m_children[0] != NULL)
+			{
+				for (int i = 0; i < compare_tree->m_children.size(); i++)
+				{
+					if (compare_tree->m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
+					{
+						return true; // not sure if this should be there? or if this would ever do anything
+					}
+				}
+			}
 
 	return false;
 }
@@ -433,9 +455,11 @@ void SceneNode::SetGameObject(GameObject * m)
 }
 XMVECTOR SceneNode::getWorldCentrePosition()
 {
-	return XMVectorSet( m_world_centre_x,
+	XMVECTOR result;
+	result = XMVectorSet( m_world_centre_x,
 						m_world_centre_y,
-						m_world_centre_z, 0.0);
+						m_world_centre_z, 0.0f);
+	return result;
 }
 ObjFileModel::xyz SceneNode::XMVecToXYZ(XMVECTOR input)
 {
@@ -447,7 +471,9 @@ ObjFileModel::xyz SceneNode::XMVecToXYZ(XMVECTOR input)
 }
 XMVECTOR SceneNode::XYZToXMVec(ObjFileModel::xyz* input)
 {
-	return XMVectorSet(input->x, input->y, input->z, 0.0);
+	XMVECTOR result;
+	result = XMVectorSet(input->x, input->y, input->z, 0.0f);
+	return result;
 }
 ObjFileModel::xyz SceneNode::addTogether(ObjFileModel::xyz * one, ObjFileModel::xyz * two)
 {

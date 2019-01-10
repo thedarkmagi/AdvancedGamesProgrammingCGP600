@@ -75,7 +75,7 @@ void GameManager::RenderFrame(void)
 		//	g_cam_node->SetZPos(pCamera->getZ());//15
 
 		//}
-		if (g_cam_node->checkCollisionRay(&oldPos, &newPos, g_root_node) == true)
+		if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
 			pCamera->forward(-0.002f);
@@ -118,7 +118,7 @@ void GameManager::RenderFrame(void)
 		//	g_cam_node->SetZPos(pCamera->getZ());//15
 
 		//}
-		if (g_cam_node->checkCollisionRay(&oldPos, &newPos, g_root_node) == true)
+		if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
 			pCamera->forward(0.002f);

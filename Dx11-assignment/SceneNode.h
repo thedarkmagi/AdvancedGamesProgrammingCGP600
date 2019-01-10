@@ -1,11 +1,14 @@
 #pragma once
+#include <d3d11.h>
+#include <dxgi.h>
+#include <d3dx11.h>
+#include <windows.h>
+#include <dxerr.h>
+
 #define _XM_NO_INTRINSICS_
 #define XM_NO_ALIGNMENT
-
-#include <d3d11.h>
-#include <d3dx11.h>
-#include <dxerr.h>
 #include <xnamath.h>
+
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -26,6 +29,7 @@ public:
 	bool checkCollision(SceneNode* compare_tree);
 	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root);
 	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree);
+	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, SceneNode* object_tree_root);
 	bool lookAt_XZ(float x, float z);
 	bool lookAt_XZ(float x, float z, SceneNode* root_node);
 	bool moveForward(float amount);
