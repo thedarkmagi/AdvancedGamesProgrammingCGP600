@@ -12,6 +12,7 @@
 
 #include "Model.h"
 #include "GameObject.h"
+#include "maths.h"
 class SceneNode
 {
 public:
@@ -55,6 +56,9 @@ public:
 	void SetModel(Model* m);
 	void SetGameObject(GameObject* m);
 	XMVECTOR getWorldCentrePosition();
+
+	ObjFileModel::xyz XMVecToXYZ(XMVECTOR input);
+	ObjFileModel::xyz addTogether(ObjFileModel::xyz* one, ObjFileModel::xyz* two);
 #pragma endregion
 private:
 	Model * m_pModel;
@@ -65,5 +69,6 @@ private:
 	float			m_scale;
 	float			m_world_centre_x, m_world_centre_y, m_world_centre_z, m_world_scale;
 	XMMATRIX m_local_world_matrix;
+	maths*	localMath;
 };
 
