@@ -18,6 +18,8 @@ public:
 
 	Plane planeEquation(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2, ObjFileModel::xyz* v3);
 	float comparePlaneToPoint(Plane plane, ObjFileModel::xyz point);
-	
+	ObjFileModel::xyz planeIntersection(Plane* p, ObjFileModel::xyz* point1, ObjFileModel::xyz* point2);
+	bool in_triangle(ObjFileModel::xyz* triangle0, ObjFileModel::xyz* triangle1, ObjFileModel::xyz* triangle2, ObjFileModel::xyz* point);
+	int sign(float number);
 };
 

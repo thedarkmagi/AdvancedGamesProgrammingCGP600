@@ -20,6 +20,10 @@ public:
 	float getX();
 	float getY();
 	float getZ();
+
+	float getDX();
+	float getDY();
+	float getDZ();
 private:
 	float m_x;
 	float m_y;

@@ -552,6 +552,11 @@ XMVECTOR Model::getBoundingSpherePos()
 	return XMVectorSet(m_bounding_sphere_centre_x, m_bounding_sphere_centre_y, m_bounding_sphere_centre_z , 0.0);
 }
 
+ObjFileModel * Model::getObject()
+{
+	return m_pObject;
+}
+
 #pragma endregion
 
 Model::~Model()

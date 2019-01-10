@@ -75,19 +75,19 @@ void SceneNode::execute(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection
 void SceneNode::updateCollisionTree(XMMATRIX * world, float scale)
 {
 	// the local_world matrix will be used to calculate the local transformations for this node
-	XMMATRIX local_world = XMMatrixIdentity();
+	 m_local_world_matrix = XMMatrixIdentity();
 
-	local_world = XMMatrixRotationX(XMConvertToRadians(m_xAngle));
-	local_world *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
-	local_world *= XMMatrixRotationZ(XMConvertToRadians(m_zAngle));
+	 m_local_world_matrix = XMMatrixRotationX(XMConvertToRadians(m_xAngle));
+	 m_local_world_matrix *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
+	 m_local_world_matrix *= XMMatrixRotationZ(XMConvertToRadians(m_zAngle));
 
-	local_world *= XMMatrixScaling(m_scale, m_scale, m_scale);
+	 m_local_world_matrix *= XMMatrixScaling(m_scale, m_scale, m_scale);
 
-	local_world *= XMMatrixTranslation(m_x, m_y, m_z);
+	 m_local_world_matrix *= XMMatrixTranslation(m_x, m_y, m_z);
 
 	// the local matrix is multiplied by the passed in world matrix that contains the concatenated
 	// transformations of all parent nodes so that this nodes transformations are relative to those
-	local_world *= *world;
+	 m_local_world_matrix *= *world;
 
 	// calc the world space scale of this object, is needed to calculate the  
 	// correct bounding sphere radius of an object in a scaled hierarchy
@@ -102,7 +102,7 @@ void SceneNode::updateCollisionTree(XMMATRIX * world, float scale)
 	else v = XMVectorSet(0, 0, 0, 0); // no model, default to 0
 
 									  // find and store world space bounding sphere centre
-	v = XMVector3Transform(v, local_world);
+	v = XMVector3Transform(v, m_local_world_matrix);
 	m_world_centre_x = XMVectorGetX(v);
 	m_world_centre_y = XMVectorGetY(v);
 	m_world_centre_z = XMVectorGetZ(v);
@@ -110,7 +110,7 @@ void SceneNode::updateCollisionTree(XMMATRIX * world, float scale)
 	// traverse all child nodes, passing in the concatenated world matrix and scale
 	for (int i = 0; i< m_children.size(); i++)
 	{
-		m_children[i]->updateCollisionTree(&local_world, m_world_scale);
+		m_children[i]->updateCollisionTree(&m_local_world_matrix, m_world_scale);
 	}
 
 }
@@ -170,6 +170,31 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 
 	return false;
 
+}
+
+bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, SceneNode * object_tree_root)
+{
+	if (m_pGameObject)
+	{
+		if (m_pGameObject->getModel())
+		{
+			ObjFileModel::xyz dist;
+			dist.x = ray->x - XMVectorGetX(getWorldCentrePosition());
+			dist.y = ray->y - XMVectorGetY(getWorldCentrePosition());
+			dist.z = ray->z - XMVectorGetZ(getWorldCentrePosition());
+
+			if (dist.x*dist.x + dist.y * dist.y + dist.z*dist.z > (compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
+				(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
+			{
+				for (int i = 0; i < m_pGameObject->getModel()->getObject()->numverts; i += 3)
+				{
+
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 bool SceneNode::lookAt_XZ(float x, float z)

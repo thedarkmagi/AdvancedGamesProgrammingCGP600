@@ -24,7 +24,7 @@ public:
 	void updateCollisionTree(XMMATRIX* world, float scale);
 	bool checkCollision(SceneNode* compare_tree);
 	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root);
-
+	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, SceneNode* object_tree_root);
 	bool lookAt_XZ(float x, float z);
 	bool lookAt_XZ(float x, float z, SceneNode* root_node);
 	bool moveForward(float amount);
@@ -64,5 +64,6 @@ private:
 	float			m_xAngle, m_yAngle, m_zAngle;
 	float			m_scale;
 	float			m_world_centre_x, m_world_centre_y, m_world_centre_z, m_world_scale;
+	XMMATRIX m_local_world_matrix;
 };
 

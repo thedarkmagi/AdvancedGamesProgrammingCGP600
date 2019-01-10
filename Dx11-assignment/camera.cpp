@@ -97,3 +97,18 @@ float camera::getZ()
 {
 	return m_z;
 }
+
+float camera::getDX()
+{
+	return m_dx;
+}
+
+float camera::getDY()
+{
+	return m_dy;
+}
+
+float camera::getDZ()
+{
+	return m_dz;
+}
