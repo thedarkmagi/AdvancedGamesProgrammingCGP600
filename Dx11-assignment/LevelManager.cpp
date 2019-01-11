@@ -79,6 +79,19 @@ void LevelManager::ReadFromFile(string input)
 						tempNode->SetScale(0.2f);
 						nodeHierarchy.push_back(tempNode);
 						break;
+					case 'p':
+						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
+						temp->CreateModel((char*)"assets/PointySphere.obj", (char*)"assets/texture.bmp");
+						gameObjectList.push_back(temp);
+
+						//tempNode->SetModel(temp->getModel());#
+						tempNode->SetGameObject(temp);
+						m_rootNode->addChildNode(tempNode);
+						tempNode->SetXPos(i * 2);
+						tempNode->SetZPos(j * 2);
+						tempNode->SetScale(0.05f);
+						nodeHierarchy.push_back(tempNode);
+						break;
 
 					default:
 						break;

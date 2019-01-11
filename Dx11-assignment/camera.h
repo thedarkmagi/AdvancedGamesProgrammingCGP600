@@ -4,6 +4,7 @@
 #define _XM_NO_INTRINSICS_
 #define XM_NO_ALIGNMENT
 #include <xnamath.h>
+#include "GameTimer.h"
 class camera
 {
 public:

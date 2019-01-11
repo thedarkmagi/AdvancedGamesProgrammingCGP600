@@ -28,8 +28,8 @@ void camera:: rotate(float nDegrees)
 
 void camera::forward(float distance)
 {
-	m_x += distance * m_dx;
-	m_z += distance * m_dz;
+	m_x += distance * m_dx *GameTimer::getInstance()->DeltaTime();
+	m_z += distance * m_dz*GameTimer::getInstance()->DeltaTime();
 }
 
 void camera::up()
@@ -42,8 +42,8 @@ void camera::strafe(float distance)
 	XMVECTOR direction;
 	direction = XMVector3Cross(m_up, m_lookat-m_position);
 	//direction = XMVector3Cross(m_up,direction);
-	m_x += direction.x * distance;// *m_dx;
-	m_z += direction.z * distance;// *m_dz;
+	m_x += direction.x * distance*GameTimer::getInstance()->DeltaTime();// *m_dx;
+	m_z += direction.z * distance*GameTimer::getInstance()->DeltaTime();// *m_dz;
 }
 
 void camera::moveUp(float distance)

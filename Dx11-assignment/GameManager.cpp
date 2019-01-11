@@ -50,7 +50,7 @@ void GameManager::RenderFrame(void)
 		oldPos.x = pCamera->getX();
 		oldPos.y = pCamera->getY();
 		oldPos.z = pCamera->getZ();
-		pCamera->forward(0.002f);
+		pCamera->forward(1.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
@@ -75,14 +75,17 @@ void GameManager::RenderFrame(void)
 		//	g_cam_node->SetZPos(pCamera->getZ());//15
 
 		//}
-		if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node) == true)
+		if (g_cam_node->checkCollision(g_root_node) == true)
 		{
-			// if there is a collision, restore camera and camera node positions
-			pCamera->forward(-0.002f);
-			g_cam_node->SetXPos(pCamera->getX()); //15
-			g_cam_node->SetYPos(pCamera->getY());//15
-			g_cam_node->SetZPos(pCamera->getZ());//15
+			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node) == true)
+			{
+				// if there is a collision, restore camera and camera node positions
+				pCamera->forward(-1.002f);
+				g_cam_node->SetXPos(pCamera->getX()); //15
+				g_cam_node->SetYPos(pCamera->getY());//15
+				g_cam_node->SetZPos(pCamera->getZ());//15
 
+			}
 		}
 
 	}
@@ -93,7 +96,7 @@ void GameManager::RenderFrame(void)
 		oldPos.y = pCamera->getY();
 		oldPos.z = pCamera->getZ();
 
-		pCamera->forward(-0.002f);
+		pCamera->forward(-1.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
@@ -118,19 +121,22 @@ void GameManager::RenderFrame(void)
 		//	g_cam_node->SetZPos(pCamera->getZ());//15
 
 		//}
-		if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node) == true)
+		if (g_cam_node->checkCollision(g_root_node) == true)
 		{
-			// if there is a collision, restore camera and camera node positions
-			pCamera->forward(0.002f);
-			g_cam_node->SetXPos(pCamera->getX());//15
-			g_cam_node->SetYPos(pCamera->getY());//15
-			g_cam_node->SetZPos(pCamera->getZ());//15
+			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node) == true)
+			{
+				// if there is a collision, restore camera and camera node positions
+				pCamera->forward(1.002f);
+				g_cam_node->SetXPos(pCamera->getX());//15
+				g_cam_node->SetYPos(pCamera->getY());//15
+				g_cam_node->SetZPos(pCamera->getZ());//15
 
+			}
 		}
 	}
 	if (g_pInput->IsKeyPressed(DIK_A))
 	{
-		pCamera->strafe(-0.002f);
+		pCamera->strafe(-1.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
@@ -144,7 +150,7 @@ void GameManager::RenderFrame(void)
 		if (g_cam_node->checkCollision(g_root_node) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
-			pCamera->strafe(0.002f);
+			pCamera->strafe(1.002f);
 			g_cam_node->SetXPos(pCamera->getX()); //15
 			g_cam_node->SetYPos(pCamera->getY());//15
 			g_cam_node->SetZPos(pCamera->getZ());//15
@@ -153,7 +159,7 @@ void GameManager::RenderFrame(void)
 	}
 	if (g_pInput->IsKeyPressed(DIK_D))
 	{
-		pCamera->strafe(0.002f);
+		pCamera->strafe(1.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
