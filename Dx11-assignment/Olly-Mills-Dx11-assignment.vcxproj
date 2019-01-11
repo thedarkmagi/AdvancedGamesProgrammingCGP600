@@ -155,6 +155,7 @@
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="text2D.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="model_shaders0.hlsl">
@@ -196,6 +197,7 @@
     <ClInclude Include="SceneNode.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="text2D.h" />
+    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
