@@ -74,11 +74,21 @@ ObjFileModel::xyz maths::planeIntersection(Plane * p, ObjFileModel::xyz * point1
 	ray.z = point1->z - point2->z;
 	float t = (-p->d - dot(&p->normal, point1)) / dot(&p->normal, point2);
 
-	pointAlongRay.x = point1->x + (ray.x *t);
-	pointAlongRay.y = point1->y + (ray.y *t);
-	pointAlongRay.z = point1->z + (ray.z *t);
+	if (t > 0.0 && t < 1.0f)
+	{
 
-	return pointAlongRay;
+		pointAlongRay.x = point1->x + (ray.x *t);
+		pointAlongRay.y = point1->y + (ray.y *t);
+		pointAlongRay.z = point1->z + (ray.z *t);
+		return pointAlongRay;
+	}
+	else
+	{
+		pointAlongRay.x = 99999999999.0f;
+		pointAlongRay.y = 99999999999.0f;
+		pointAlongRay.z = 99999999999.0f;
+		return pointAlongRay;
+	}
 }
 
 bool maths::in_triangle(ObjFileModel::xyz * triangle0, ObjFileModel::xyz * triangle1, ObjFileModel::xyz * triangle2, ObjFileModel::xyz * point)

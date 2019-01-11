@@ -13,7 +13,7 @@ GameManager::GameManager(ID3D11Device * device, ID3D11DeviceContext * deviceCont
 
 	g_pBackBufferRTView = BackBufferRTView;
 	g_pZBuffer = ZBuffer;
-
+	g_DirectionalColours = 0.8f;
 	g_pInput = new input(g_hInst, g_hWnd);
 	g_pInput->initialise();
 	SetupAlphaBlendStates();
@@ -215,7 +215,7 @@ void GameManager::RenderFrame(void)
 	//lighting
 	g_directional_light_shines_from = XMVectorSet(g_lightX, 0.0f, -1.0f, 0.0f);
 	g_directional_light_colour = XMVectorSet(g_DirectionalColours, g_DirectionalColours, g_DirectionalColours, 1.0f);//WHITE??? 
-	g_ambient_light_colour = XMVectorSet(1.1f, 1.1f, 1.1f, 1.0f);//dark grey - always use a small value for ambient lighting
+	g_ambient_light_colour = XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f);//dark grey - always use a small value for ambient lighting
 
 
 	g_pModel->setdirectionalLightColour(&g_directional_light_colour);
