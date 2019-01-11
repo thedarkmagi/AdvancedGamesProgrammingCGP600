@@ -14,13 +14,26 @@
 class maths
 {
 public:
+
+	static maths* instance;
+	static maths* getInstance()
+	{
+		if (!instance)
+		{
+			instance = new maths();
+		}
+		return instance;
+	}
+	maths(maths const&) = delete;
+	void operator=(maths const&) = delete;
+
+
 	struct Plane
 	{
 		ObjFileModel::xyz normal; //the normal to the plane 
 		float d; //the 'd' constant in the equation for this 
 	};
-	maths();
-	~maths();
+	
 
 	float dot(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2);
 	ObjFileModel::xyz cross(ObjFileModel::xyz* v1, ObjFileModel::xyz* v2);
@@ -31,5 +44,8 @@ public:
 	ObjFileModel::xyz planeIntersection(Plane* p, ObjFileModel::xyz* point1, ObjFileModel::xyz* point2);
 	bool in_triangle(ObjFileModel::xyz* triangle0, ObjFileModel::xyz* triangle1, ObjFileModel::xyz* triangle2, ObjFileModel::xyz* point);
 	int sign(float number);
+private:
+	maths();
+	~maths();
 };
 

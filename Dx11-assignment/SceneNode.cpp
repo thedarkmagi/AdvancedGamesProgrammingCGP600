@@ -13,8 +13,8 @@ SceneNode::SceneNode()
 	m_zAngle = 0.0f;
 	m_scale = 1.0f;
 	//m_children
-	// should probably change this to a static class but oh well 
-	localMath = new maths();
+
+
 }
 
 
@@ -214,13 +214,13 @@ bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * r
 						p2 = XMVector3Transform(p2, m_local_world_matrix);
 						p3 = XMVector3Transform(p3, m_local_world_matrix);
 
-						maths::Plane plane = localMath->planeEquation(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3));
-						float startOfRay = localMath->comparePlaneToPoint(plane, *ray);
-						float endOfRay = localMath->comparePlaneToPoint(plane, addTogether(ray, rayDirection));
-						if (localMath->sign(startOfRay) > 0 && localMath->sign(endOfRay) < 0 || localMath->sign(startOfRay) < 0 && localMath->sign(endOfRay) > 0)
+						maths::Plane plane = maths::getInstance()->planeEquation(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3));
+						float startOfRay = maths::getInstance()->comparePlaneToPoint(plane, *ray);
+						float endOfRay = maths::getInstance()->comparePlaneToPoint(plane, addTogether(ray, rayDirection));
+						if (maths::getInstance()->sign(startOfRay) > 0 && maths::getInstance()->sign(endOfRay) < 0 || maths::getInstance()->sign(startOfRay) < 0 && maths::getInstance()->sign(endOfRay) > 0)
 						{
-							ObjFileModel::xyz intersectionPoint = localMath->planeIntersection(&plane, ray, &addTogether(ray, rayDirection));
-							if (localMath->in_triangle(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3), &intersectionPoint))
+							ObjFileModel::xyz intersectionPoint = maths::getInstance()->planeIntersection(&plane, ray, &addTogether(ray, rayDirection));
+							if (maths::getInstance()->in_triangle(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3), &intersectionPoint))
 							{
 								return true;
 							}
@@ -232,25 +232,25 @@ bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * r
 		}
 	}
 	if (!m_children.empty() )
+	{
+		for (int i = 0; i < m_children.size(); i++)
+		{
+			if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
 			{
-				for (int i = 0; i < m_children.size(); i++)
-				{
-					if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
-					{
-						return true; // not sure if this should be there? or if this would ever do anything
-					}
-				}
+				return true; 
 			}
-			if (!compare_tree->m_children.empty())// & *compare_tree->m_children[0] != NULL)
+		}
+	}
+	if (!compare_tree->m_children.empty())
+	{
+		for (int i = 0; i < compare_tree->m_children.size(); i++)
+		{
+			if (compare_tree->m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
 			{
-				for (int i = 0; i < compare_tree->m_children.size(); i++)
-				{
-					if (compare_tree->m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
-					{
-						return true; // not sure if this should be there? or if this would ever do anything
-					}
-				}
+				return true; 
 			}
+		}
+	}
 
 	return false;
 }

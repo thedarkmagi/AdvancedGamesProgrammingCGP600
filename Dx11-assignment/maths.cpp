@@ -1,6 +1,6 @@
 #include "maths.h"
 
-
+maths * maths::instance = nullptr;
 
 maths::maths()
 {
