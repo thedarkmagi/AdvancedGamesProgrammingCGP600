@@ -1,8 +1,10 @@
 #include "Model.h"
 #include <sstream>
+#include "ModelManager.h"
 struct MODEL_CONSTANT_BUFFER
 {
 	XMMATRIX WorldViewProjection; // 64bytes
+
 	XMVECTOR direction_light_vector; // 16 bytes;
 	XMVECTOR directional_light_colour; // 16 bytes;
 	XMVECTOR ambient_light_colour; // 16 bytes;
@@ -99,7 +101,8 @@ HRESULT Model::LoadObjModel(char * Filename, int shaderFileNumber)
 {
 	HRESULT hr = S_OK;
 
-	m_pObject = new ObjFileModel(Filename, m_pD3DDevice, m_pImmediateContext);
+	//m_pObject = new ObjFileModel(Filename, m_pD3DDevice, m_pImmediateContext);
+	m_pObject = ModelManager::getInstance()->getModel(Filename, m_pD3DDevice, m_pImmediateContext);
 	if (m_pObject->filename == "FILE NOT LOADED")hr= S_FALSE;
 	
 
@@ -289,6 +292,7 @@ void Model::Draw(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection)
 	model_cb_values.directional_light_colour = *directional_light_colour;
 	model_cb_values.direction_light_vector = XMVector3Transform(*direction_light_vector, transpose);
 	model_cb_values.direction_light_vector = XMVector3Normalize(model_cb_values.direction_light_vector);
+
 	if (m_twoTextures)
 	{
 		model_cb_values.twoTextures = true;

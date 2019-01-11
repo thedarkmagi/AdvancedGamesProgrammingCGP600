@@ -149,6 +149,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maths.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="objfilemodel.cpp" />
     <ClCompile Include="ParticleGenerator.cpp" />
     <ClCompile Include="SceneNode.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="LevelManager.h" />
     <ClInclude Include="maths.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="objfilemodel.h" />
     <ClInclude Include="ParticleGenerator.h" />
     <ClInclude Include="SceneNode.h" />
