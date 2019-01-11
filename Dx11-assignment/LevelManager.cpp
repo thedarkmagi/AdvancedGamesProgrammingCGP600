@@ -81,7 +81,7 @@ void LevelManager::ReadFromFile(string input)
 						break;
 					case 'p':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
-						temp->CreateModel((char*)"assets/PointySphere.obj", (char*)"assets/texture.bmp");
+						temp->CreateModel((char*)"assets/giantRobot.obj", (char*)"assets/1pPink.bmp");
 						gameObjectList.push_back(temp);
 
 						//tempNode->SetModel(temp->getModel());#
@@ -89,7 +89,7 @@ void LevelManager::ReadFromFile(string input)
 						m_rootNode->addChildNode(tempNode);
 						tempNode->SetXPos(i * 2);
 						tempNode->SetZPos(j * 2);
-						tempNode->SetScale(0.05f);
+						tempNode->SetScale(0.5f);
 						nodeHierarchy.push_back(tempNode);
 						break;
 
