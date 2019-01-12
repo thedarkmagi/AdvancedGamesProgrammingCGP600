@@ -3,7 +3,9 @@ cbuffer CBuffer0
 	matrix WVPMatrix; //64 bytes
 	float4 color; // 16 bytes;
 };
+Texture2D texture0;
 
+SamplerState sampler0;
 
 struct VOut
 {
@@ -33,6 +35,6 @@ float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float2 texco
 {
     float distsq = texcoord.x * texcoord.x + texcoord.y * texcoord.y;
     clip(1.0f - distsq);
-    return color;
+    return texture0.Sample(sampler0, texcoord) * color;
 
 }

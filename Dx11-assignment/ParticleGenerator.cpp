@@ -212,6 +212,8 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 			m_pImmediateContext->VSSetShader(m_pVShader, 0, 0);
 			m_pImmediateContext->PSSetShader(m_pPShader, 0, 0);
 			m_pImmediateContext->IASetInputLayout(m_pInputLayout);
+			m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture0);
+			m_pImmediateContext->PSSetSamplers(0, 1, &m_pSampler0);
 
 			m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
@@ -277,6 +279,7 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 	m_pImmediateContext->VSSetShader(m_pVShader, 0, 0);
 	m_pImmediateContext->PSSetShader(m_pPShader, 0, 0);
 	m_pImmediateContext->IASetInputLayout(m_pInputLayout);
+	
 
 	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
@@ -455,7 +458,7 @@ int ParticleGenerator::ParticleFactory()
 	/*CalcModelCentrePoint();
 	CalcBoundingSphereRadius();*/
 	setupShader();
-
+	AddTexture((char*)"assets/Particle.bmp");
 
 	return 0;
 

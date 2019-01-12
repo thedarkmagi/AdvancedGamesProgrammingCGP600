@@ -154,6 +154,22 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 			(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
 		{
 			return true;
+			for (int i = 0; i < compare_tree->m_pGameObject->getModel()->getObject()->numverts; i += 3)
+			{
+				XMVECTOR p1 = XMVectorSet(compare_tree->m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
+					compare_tree->m_pGameObject->getModel()->getObject()->vertices[i].Pos.y,
+					compare_tree->m_pGameObject->getModel()->getObject()->vertices[i].Pos.z, 0.0f);
+				XMVECTOR p2 = XMVectorSet(compare_tree->m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.x,
+					compare_tree->m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.y,
+					compare_tree->m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.z, 0.0f);
+				XMVECTOR p3 = XMVectorSet(compare_tree->m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.x,
+					compare_tree->m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.y,
+					compare_tree->m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.z, 0.0f);
+
+				p1 = XMVector3Transform(p1, compare_tree->m_local_world_matrix);
+				p2 = XMVector3Transform(p2, compare_tree->m_local_world_matrix);
+				p3 = XMVector3Transform(p3, compare_tree->m_local_world_matrix);
+			}
 		}
 	}
 
@@ -175,12 +191,12 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 
 }
 
-bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree)
+bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, bool checkChilden)
 {
 	return checkCollisionRay(ray, rayDirection, compare_tree, this);
 }
 
-bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, SceneNode* object_tree_root)
+bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, SceneNode* object_tree_root, bool checkChilden)
 {
 	if (compare_tree == object_tree_root) return false;
 
@@ -231,27 +247,29 @@ bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * r
 			
 		}
 	}
-	if (!m_children.empty() )
+	if (checkChilden)
 	{
-		for (int i = 0; i < m_children.size(); i++)
+		if (!m_children.empty())
 		{
-			if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
+			for (int i = 0; i < m_children.size(); i++)
 			{
-				return true; 
+				if (m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree, checkChilden))
+				{
+					return true;
+				}
+			}
+		}
+		if (!compare_tree->m_children.empty())
+		{
+			for (int i = 0; i < compare_tree->m_children.size(); i++)
+			{
+				if (compare_tree->m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree, checkChilden))
+				{
+					return true;
+				}
 			}
 		}
 	}
-	if (!compare_tree->m_children.empty())
-	{
-		for (int i = 0; i < compare_tree->m_children.size(); i++)
-		{
-			if (compare_tree->m_children[i]->checkCollisionRay(ray, rayDirection, compare_tree))
-			{
-				return true; 
-			}
-		}
-	}
-
 	return false;
 }
 
