@@ -1,6 +1,6 @@
 -wwwwwwww-
--p---e----
--e--------
+-p---e---w
+-e-------w
 wwwwwwwwww
 ----e-----
 -wwwwwwww-

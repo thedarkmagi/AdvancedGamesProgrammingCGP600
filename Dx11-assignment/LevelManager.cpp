@@ -90,7 +90,7 @@ void LevelManager::ReadFromFile(string input)
 						tempNode->SetXPos(i * 2);
 						tempNode->SetZPos(j * 2);
 						tempNode->SetScale(0.5f);
-						nodeHierarchy.push_back(tempNode);
+						//nodeHierarchy.push_back(tempNode);
 						break;
 
 					default:
@@ -112,8 +112,8 @@ void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projecti
 	for (int i = 0; i < nodeHierarchy.size(); i++)
 	{
 		//nodeHierarchy[i]->incX(1*GameTimer::getInstance()->DeltaTime(), m_rootNode);
-		nodeHierarchy[i]->lookAt_XZ(cameraX, cameraZ);
-		//nodeHierarchy[i]->moveForward(1 * GameTimer::getInstance()->DeltaTime(), m_rootNode);
+		//nodeHierarchy[i]->lookAt_XZ(cameraX, cameraZ);
+		nodeHierarchy[i]->moveForward(1 * GameTimer::getInstance()->DeltaTime(), m_rootNode);
 	}
 	m_rootNode->execute(world, view, projection, directionLightVector, lightColour, ambientLightColour);
 }

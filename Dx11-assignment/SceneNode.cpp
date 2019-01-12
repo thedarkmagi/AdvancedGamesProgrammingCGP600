@@ -153,7 +153,7 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 			(compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
 			(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
 		{
-			return true;
+			//return true;
 			for (int i = 0; i < compare_tree->m_pGameObject->getModel()->getObject()->numverts; i += 3)
 			{
 				XMVECTOR p1 = XMVectorSet(compare_tree->m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
@@ -169,6 +169,92 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 				p1 = XMVector3Transform(p1, compare_tree->m_local_world_matrix);
 				p2 = XMVector3Transform(p2, compare_tree->m_local_world_matrix);
 				p3 = XMVector3Transform(p3, compare_tree->m_local_world_matrix);
+
+				x1 = XMVectorGetX(p1);
+				x2 = XMVectorGetX(p2);
+				y1 = XMVectorGetY(p1);
+				y2 = XMVectorGetY(p2);
+				z1 = XMVectorGetZ(p1);
+				z2 = XMVectorGetZ(p2);
+				float x3 = XMVectorGetX(p3);
+				float y3 = XMVectorGetY(p3);
+				float z3 = XMVectorGetZ(p3);
+
+
+				float rx, ry, rz;
+				rx = x1 - x2;
+				ry = y1 - y2;
+				rz = z1 - z2;
+				if (checkCollisionRay(&floatsToXYZ(x1, y1, z1), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				{
+					return true;
+				}
+
+				rx = x2 - x3;
+				ry = y2 - y3;
+				rz = z2 - z3;
+				if (checkCollisionRay(&floatsToXYZ(x2, y2, z2), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				{
+					return true;
+				}
+				rx = x3 - x1;
+				ry = y3 - y1;
+				rz = z3 - z1;
+				if (checkCollisionRay(&floatsToXYZ(x3, y3, z3), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				{
+					return true;
+				}
+			}
+			for (int i = 0; i < m_pGameObject->getModel()->getObject()->numverts; i += 3)
+			{
+				XMVECTOR p1 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
+					m_pGameObject->getModel()->getObject()->vertices[i].Pos.y,
+					m_pGameObject->getModel()->getObject()->vertices[i].Pos.z, 0.0f);
+				XMVECTOR p2 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.x,
+					m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.y,
+					m_pGameObject->getModel()->getObject()->vertices[i + 1].Pos.z, 0.0f);
+				XMVECTOR p3 = XMVectorSet(m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.x,
+					m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.y,
+					m_pGameObject->getModel()->getObject()->vertices[i + 2].Pos.z, 0.0f);
+
+				p1 = XMVector3Transform(p1, m_local_world_matrix);
+				p2 = XMVector3Transform(p2, m_local_world_matrix);
+				p3 = XMVector3Transform(p3, m_local_world_matrix);
+
+				x1 = XMVectorGetX(p1);
+				x2 = XMVectorGetX(p2);
+				y1 = XMVectorGetY(p1);
+				y2 = XMVectorGetY(p2);
+				z1 = XMVectorGetZ(p1);
+				z2 = XMVectorGetZ(p2);
+				float x3 = XMVectorGetX(p3);
+				float y3 = XMVectorGetY(p3);
+				float z3 = XMVectorGetZ(p3);
+
+
+				float rx, ry, rz;
+				rx = x1 - x2;
+				ry = y1 - y2;
+				rz = z1 - z2;
+				if (checkCollisionRay(&floatsToXYZ(x1, y1, z1), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				{
+					return true;
+				}
+
+				rx = x2 - x3;
+				ry = y2 - y3;
+				rz = z2 - z3;
+				if (checkCollisionRay(&floatsToXYZ(x2, y2, z2), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				{
+					return true;
+				}
+				rx = x3 - x1;
+				ry = y3 - y1;
+				rz = z3 - z1;
+				if (checkCollisionRay(&floatsToXYZ(x3, y3, z3), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				{
+					return true;
+				}
 			}
 		}
 	}
@@ -193,7 +279,7 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 
 bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, bool checkChilden)
 {
-	return checkCollisionRay(ray, rayDirection, compare_tree, this);
+	return checkCollisionRay(ray, rayDirection, compare_tree, this, checkChilden);
 }
 
 bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, SceneNode * compare_tree, SceneNode* object_tree_root, bool checkChilden)
@@ -501,5 +587,13 @@ ObjFileModel::xyz SceneNode::addTogether(ObjFileModel::xyz * one, ObjFileModel::
 	result.z = one->z + two->z;
 
 	return result;
+}
+ObjFileModel::xyz SceneNode::floatsToXYZ(float x, float y, float z)
+{
+	ObjFileModel::xyz temp;
+	temp.x = x;
+	temp.y = y;
+	temp.z = z;
+	return temp;
 }
 #pragma endregion

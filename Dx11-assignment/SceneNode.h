@@ -64,6 +64,7 @@ public:
 	ObjFileModel::xyz XMVecToXYZ(XMVECTOR input);
 	XMVECTOR XYZToXMVec(ObjFileModel::xyz* input);
 	ObjFileModel::xyz addTogether(ObjFileModel::xyz* one, ObjFileModel::xyz* two);
+	ObjFileModel::xyz floatsToXYZ(float x, float y, float z);
 #pragma endregion
 private:
 	Model * m_pModel;
