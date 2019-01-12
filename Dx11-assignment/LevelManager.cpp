@@ -57,7 +57,7 @@ void LevelManager::ReadFromFile(string input)
 						break;
 					case 'c':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
-						temp->CreateModel((char*)"assets/cube.obj", (char*)"assets/texture.bmp");
+						temp->CreateModel((char*)"assets/cube.obj", (char*)"assets/texture3.bmp", (char*)"assets/texture3.png");
 						//questionable if needed
 						//gameObjectList.push_back(temp);
 						//tempNode->SetModel(temp->getModel());#
@@ -65,6 +65,9 @@ void LevelManager::ReadFromFile(string input)
 						m_rootNode->addChildNode(tempNode);
 						tempNode->SetXPos(i * 2);
 						tempNode->SetZPos(j * 2);
+
+						//tempNode->SetScale(2.0f);
+						nodeHierarchy.push_back(tempNode);
 						break;
 					case 'e':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
@@ -77,7 +80,7 @@ void LevelManager::ReadFromFile(string input)
 						tempNode->SetXPos(i * 2);
 						tempNode->SetZPos(j * 2);
 						tempNode->SetScale(0.2f);
-						nodeHierarchy.push_back(tempNode);
+						//nodeHierarchy.push_back(tempNode);
 						break;
 					case 'p':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
@@ -92,7 +95,19 @@ void LevelManager::ReadFromFile(string input)
 						tempNode->SetScale(0.5f);
 						//nodeHierarchy.push_back(tempNode);
 						break;
+					case 's':
+						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
+						temp->CreateModel((char*)"assets/PointySphere.obj", (char*)"assets/texture.bmp");
+						gameObjectList.push_back(temp);
 
+						//tempNode->SetModel(temp->getModel());#
+						tempNode->SetGameObject(temp);
+						m_rootNode->addChildNode(tempNode);
+						tempNode->SetXPos(i * 2);
+						tempNode->SetZPos(j * 2);
+						tempNode->SetScale(0.2f);
+						nodeHierarchy.push_back(tempNode);
+						break;
 					default:
 						break;
 				}
@@ -113,7 +128,7 @@ void LevelManager::update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projecti
 	{
 		//nodeHierarchy[i]->incX(1*GameTimer::getInstance()->DeltaTime(), m_rootNode);
 		//nodeHierarchy[i]->lookAt_XZ(cameraX, cameraZ);
-		nodeHierarchy[i]->moveForward(1 * GameTimer::getInstance()->DeltaTime(), m_rootNode);
+		nodeHierarchy[i]->moveForward(1, m_rootNode);
 	}
 	m_rootNode->execute(world, view, projection, directionLightVector, lightColour, ambientLightColour);
 }

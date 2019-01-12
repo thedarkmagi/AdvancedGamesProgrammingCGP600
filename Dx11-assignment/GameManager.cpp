@@ -75,7 +75,7 @@ void GameManager::RenderFrame(void)
 		//	g_cam_node->SetZPos(pCamera->getZ());//15
 
 		//}
-		if (g_cam_node->checkCollision(g_root_node) == true)
+		if (g_cam_node->checkCollision(g_root_node, true) == true)
 		{
 			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
 			{
@@ -121,7 +121,7 @@ void GameManager::RenderFrame(void)
 		//	g_cam_node->SetZPos(pCamera->getZ());//15
 
 		//}
-		if (g_cam_node->checkCollision(g_root_node) == true)
+		if (g_cam_node->checkCollision(g_root_node,true) == true)
 		{
 			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
 			{
@@ -147,7 +147,7 @@ void GameManager::RenderFrame(void)
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
-		if (g_cam_node->checkCollision(g_root_node) == true)
+		if (g_cam_node->checkCollision(g_root_node, true) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
 			pCamera->strafe(1.002f);
@@ -170,7 +170,7 @@ void GameManager::RenderFrame(void)
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
-		if (g_cam_node->checkCollision(g_root_node) == true)
+		if (g_cam_node->checkCollision(g_root_node, true) == true)
 		{
 			// if there is a collision, restore camera and camera node positions
 			pCamera->strafe(-0.002f);
@@ -250,7 +250,9 @@ void GameManager::RenderFrame(void)
 
 	/*g_node1->SetXPos(10.0f);
 	g_node2->SetYPos(10.0f);*/
-	g_root_node->execute(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
+
+
+	//g_root_node->execute(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
 	//g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
 	//g_pModel3->moveForward(0.001f);
 

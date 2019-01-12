@@ -1,7 +1,7 @@
 cbuffer CBuffer0
 {
 	matrix WVPMatrix; //64 bytes
-
+    matrix WorldView;
 	float4 directional_light_vector; // 16 bytes;
 	float4 directional_light_colour; // 16 bytes;
 	float4 ambient_light_colour; // 16 bytes;
@@ -9,7 +9,7 @@ cbuffer CBuffer0
 };
 
 Texture2D texture0;
-
+TextureCube textureCube;
 SamplerState sampler0;
 
 struct VOut
@@ -26,8 +26,14 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 {
 	VOut output;
 
-	float4 default_color = { 1.0, 1.0, 1.0, 1.0 };
+	//float4 default_color = { 1.0, 1.0, 1.0, 1.0 };
 	
+ //   float3 wvpos = mul(WorldView, position);
+
+ //   float3 wvnormal = mul(WVPMatrix, normal);
+ //   wvnormal = normalize(wvnormal);
+
+ //   float3 eyer = -normalize(wvpos);
     
 
 	output.position = mul(WVPMatrix, position);
@@ -39,6 +45,7 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 
     output.color = ambient_light_colour + (directional_light_colour * diffuse_amount);
 
+   // output.texcoord = 2.0 * dot(eyer, wvnormal) * wvnormal - eyer;
 	output.texcoord = texcoord;
 	//output.color = default_color;
 

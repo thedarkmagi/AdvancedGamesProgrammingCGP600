@@ -5,13 +5,13 @@
 struct MODEL_CONSTANT_BUFFER
 {
 	XMMATRIX WorldViewProjection; // 64bytes
-
+	XMMATRIX WorldView;
 	XMVECTOR direction_light_vector; // 16 bytes;
 	XMVECTOR directional_light_colour; // 16 bytes;
 	XMVECTOR ambient_light_colour; // 16 bytes;
 	bool	twoTextures;
 };// total 112;
-const int constantBufferByteWidth = 112;
+const int constantBufferByteWidth = 176;
 
 void Model::CalculateModelCentrePoint()
 {
@@ -249,7 +249,7 @@ void Model::Draw(XMMATRIX* view, XMMATRIX* projection)
 
 	MODEL_CONSTANT_BUFFER model_cb_values;
 	model_cb_values.WorldViewProjection = world * (*view)*(*projection);
-
+	model_cb_values.WorldView = world * (*view);
 	transpose = XMMatrixTranspose(world);
 
 	model_cb_values.ambient_light_colour = *ambient_light_colour;
@@ -264,6 +264,8 @@ void Model::Draw(XMMATRIX* view, XMMATRIX* projection)
 	else
 	{
 		model_cb_values.twoTextures = false;
+		
+		m_pImmediateContext->PSSetShaderResources(1, 1, &m_pTextureCube);
 	}
 	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &model_cb_values, 0, 0);
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
@@ -335,6 +337,9 @@ HRESULT Model::AddTexture(char* filename)
 	TextureManager::TextureNSampler* temp = TextureManager::getInstance()->getTexture(filename, m_pD3DDevice, false);
 	m_pSampler0 = temp->m_pSampler0;
 	m_pTexture0 = temp->m_pTexture0;
+
+	/*TextureManager::TextureNSampler* temp2 = TextureManager::getInstance()->getTexture((char*)"assets/DaylightSkybox.dds", m_pD3DDevice, false);
+	m_pTextureCube = temp2->m_pTexture0;*/
 	return hr;
 }
 
@@ -354,7 +359,8 @@ HRESULT Model::AddTexture(char * filename, char * filename2)
 
 	//D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename, NULL, NULL, &m_pTexture0, NULL);
 	//D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename2, NULL, NULL, &m_pTexture1, NULL);
-	TextureManager::TextureNSampler* temp = TextureManager::getInstance()->getTexture(filename, m_pD3DDevice, true);
+	TextureManager::TextureNSampler* temp = TextureManager::getInstance()->getTexture(filename, filename2, m_pD3DDevice, true);
+
 	m_pSampler0 = temp->m_pSampler0;
 	m_pTexture0 = temp->m_pTexture0;
 	m_pTexture1 = temp->m_pTexture1;

@@ -1,5 +1,5 @@
 #include "SceneNode.h"
-
+#include"GameTimer.h"
 
 
 SceneNode::SceneNode()
@@ -118,12 +118,12 @@ void SceneNode::updateCollisionTree(XMMATRIX * world, float scale)
 
 }
 
-bool SceneNode::checkCollision(SceneNode * compare_tree)
+bool SceneNode::checkCollision(SceneNode * compare_tree, bool checkChilden)
 {
-	return checkCollision(compare_tree, this);
+	return checkCollision(compare_tree, this, checkChilden);
 }
 
-bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree_root)
+bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree_root, bool checkChilden)
 {
 	// check to see if root of tree being compared is same as root node of object tree being checked
 	// i.e. stop object node and children being checked against each other
@@ -153,7 +153,7 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 			(compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
 			(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
 		{
-			//return true;
+			return true;
 			for (int i = 0; i < compare_tree->m_pGameObject->getModel()->getObject()->numverts; i += 3)
 			{
 				XMVECTOR p1 = XMVectorSet(compare_tree->m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
@@ -263,14 +263,14 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 	for (int i = 0; i< compare_tree->m_children.size(); i++)
 	{
 		// check for collsion against all compared tree child nodes 
-		if (checkCollision(compare_tree->m_children[i], object_tree_root) == true) return true;
+		if (checkCollision(compare_tree->m_children[i], object_tree_root, checkChilden) == true) return true;
 	}
 
 	// iterate through composite object child nodes
 	for (int i = 0; i< m_children.size(); i++)
 	{
 		// check all the child nodes of the composite object against compared tree
-		if (m_children[i]->checkCollision(compare_tree, object_tree_root) == true) return true;
+		if (m_children[i]->checkCollision(compare_tree, object_tree_root, checkChilden) == true) return true;
 	}
 
 	return false;
@@ -292,10 +292,10 @@ bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * r
 		{
 			ObjFileModel::xyz dist;
 			// multiplier allows distance to be long enough to actually allow collision to happen
-			dist.x = (ray->x - XMVectorGetX(getWorldCentrePosition())) * 2;
-			dist.y = (ray->y - XMVectorGetY(getWorldCentrePosition())) * 2;
-			dist.z = (ray->z - XMVectorGetZ(getWorldCentrePosition())) * 2;
-			if (compare_tree->m_pGameObject)
+			dist.x = (ray->x - XMVectorGetX(getWorldCentrePosition()))*2;// *m_world_scale;// +m_pGameObject->getModel()->GetBoundingSphereRadius() * 2;
+			dist.y = (ray->y - XMVectorGetY(getWorldCentrePosition()))*2; //*m_world_scale;  //+m_pGameObject->getModel()->GetBoundingSphereRadius() * 2;
+			dist.z = (ray->z - XMVectorGetZ(getWorldCentrePosition()))*2; //*m_world_scale; //+m_pGameObject->getModel()->GetBoundingSphereRadius() * 2;
+			if (compare_tree->m_pGameObject)						   
 			{
 				if (dist.x*dist.x + dist.y * dist.y + dist.z*dist.z > (compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
 					(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
@@ -384,8 +384,8 @@ bool SceneNode::moveForward(float amount, SceneNode * root_node)
 {
 	float old_x = m_x;	// save current state 
 	float old_z = m_z;	// save current state 
-	m_x += sin(m_yAngle * (XM_PI / 180.0)) * amount;
-	m_z += cos(m_yAngle * (XM_PI / 180.0)) * amount;		// update state
+	m_x += sin(m_yAngle * (XM_PI / 180.0)) * amount*GameTimer::getInstance()->DeltaTime();
+	m_z += cos(m_yAngle * (XM_PI / 180.0)) * amount*GameTimer::getInstance()->DeltaTime();		// update state
 
 	XMMATRIX identity = XMMatrixIdentity();
 
@@ -395,11 +395,12 @@ bool SceneNode::moveForward(float amount, SceneNode * root_node)
 	root_node->updateCollisionTree(&identity, 1.0);
 
 	// check for collision of this node (and children) against all other nodes
-	if (checkCollision(root_node) == true)
+	if (checkCollision(root_node, false) == true)
 	{
 		// if collision restore state
 		m_x = old_x;
 		m_z = old_z;
+		root_node->updateCollisionTree(&identity, 1.0);
 		return true;
 	}
 
@@ -450,7 +451,7 @@ bool SceneNode::incX(float in, SceneNode * root_node)
 	root_node->updateCollisionTree(&identity, 1.0);
 
 	// check for collision of this node (and children) against all other nodes
-	if (checkCollision(root_node) == true)
+	if (checkCollision(root_node, false) == true)
 	{
 		// if collision restore state
 		m_x = old_x;
@@ -475,7 +476,7 @@ bool SceneNode::incY(float in, SceneNode * root_node)
 	root_node->updateCollisionTree(&identity, 1.0);
 
 	// check for collision of this node (and children) against all other nodes
-	if (checkCollision(root_node) == true)
+	if (checkCollision(root_node, false) == true)
 	{
 		// if collision restore state
 		m_y = old_y;
@@ -499,7 +500,7 @@ bool SceneNode::incZ(float in, SceneNode * root_node)
 	root_node->updateCollisionTree(&identity, 1.0);
 
 	// check for collision of this node (and children) against all other nodes
-	if (checkCollision(root_node) == true)
+	if (checkCollision(root_node, false) == true)
 	{
 		// if collision restore state
 		m_z = old_z;

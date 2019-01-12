@@ -26,8 +26,8 @@ public:
 	bool detatchNode(SceneNode *n);
 	void execute(XMMATRIX *world, XMMATRIX* view, XMMATRIX* projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
 	void updateCollisionTree(XMMATRIX* world, float scale);
-	bool checkCollision(SceneNode* compare_tree);
-	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root);
+	bool checkCollision(SceneNode* compare_tree, bool checkChilden);
+	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root, bool checkChilden);
 	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, bool checkChilden);
 	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, SceneNode* object_tree_root, bool checkChilden);
 	bool lookAt_XZ(float x, float z);

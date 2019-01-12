@@ -36,6 +36,7 @@ public:
 	void operator=(TextureManager const&) = delete;
 
 	TextureNSampler* getTexture(char* input, ID3D11Device * device, bool TwoTextures);
+	TextureNSampler* getTexture(char* input, char* input2, ID3D11Device * device, bool TwoTextures);
 
 private:
 	TextureManager();

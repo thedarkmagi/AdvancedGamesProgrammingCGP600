@@ -13,6 +13,7 @@ private:
 	ID3D11Buffer*		m_pConstantBuffer;
 	ID3D11ShaderResourceView* m_pTexture0;
 	ID3D11ShaderResourceView* m_pTexture1;
+	ID3D11ShaderResourceView* m_pTextureCube;
 	ID3D11SamplerState* m_pSampler0;
 
 	float			m_x, m_y, m_z;

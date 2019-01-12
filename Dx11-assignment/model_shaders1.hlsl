@@ -1,6 +1,7 @@
 cbuffer CBuffer0
 {
 	matrix WVPMatrix; //64 bytes
+    matrix WorldView;
 	float4 directional_light_vector; // 16 bytes;
 	float4 directional_light_colour; // 16 bytes;
 	float4 ambient_light_colour; // 16 bytes;

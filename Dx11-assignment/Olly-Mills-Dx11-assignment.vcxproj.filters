@@ -71,6 +71,7 @@
     <FxCompile Include="model_shaders0.hlsl" />
     <FxCompile Include="model_shaders1.hlsl" />
     <FxCompile Include="particle_shader.hlsl" />
+    <FxCompile Include="Reflection_shaders.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
