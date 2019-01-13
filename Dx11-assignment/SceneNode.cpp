@@ -20,6 +20,7 @@ SceneNode::SceneNode()
 
 SceneNode::~SceneNode()
 {
+	detatchNode(this);
 }
 
 void SceneNode::addChildNode(SceneNode * n)

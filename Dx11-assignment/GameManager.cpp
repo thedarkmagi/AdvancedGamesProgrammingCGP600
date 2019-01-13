@@ -66,15 +66,6 @@ void GameManager::RenderFrame(void)
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
-		//if (g_cam_node->checkCollision(g_root_node) == true)
-		//{
-		//	// if there is a collision, restore camera and camera node positions
-		//	pCamera->forward(-0.002f);
-		//	g_cam_node->SetXPos(pCamera->getX()); //15
-		//	g_cam_node->SetYPos(pCamera->getY());//15
-		//	g_cam_node->SetZPos(pCamera->getZ());//15
-
-		//}
 		if (g_cam_node->checkCollision(g_root_node, true) == true)
 		{
 			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
@@ -112,15 +103,6 @@ void GameManager::RenderFrame(void)
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
-		//if (g_cam_node->checkCollision(g_root_node) == true)
-		//{
-		//	// if there is a collision, restore camera and camera node positions
-		//	pCamera->forward(0.002f);
-		//	g_cam_node->SetXPos(pCamera->getX()); //15
-		//	g_cam_node->SetYPos(pCamera->getY());//15
-		//	g_cam_node->SetZPos(pCamera->getZ());//15
-
-		//}
 		if (g_cam_node->checkCollision(g_root_node,true) == true)
 		{
 			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
@@ -201,135 +183,67 @@ void GameManager::RenderFrame(void)
 			g_cam_node->SetYPos(pCamera->getY());
 			g_cam_node->SetZPos(pCamera->getZ());
 
+			g_pParticleGenerator->SetXPos(pCamera->getX());// +(pCamera->getDX()) * 2);
+			g_pParticleGenerator->SetYPos(pCamera->getY());// + pCamera->getDY() * 2);
+			g_pParticleGenerator->SetZPos(pCamera->getZ());// +pCamera->getDX() * 2);
+			g_pParticleGenerator->setIsActive(true);
 			XMMATRIX identity = XMMatrixIdentity();
 
 			// update tree to reflect new camera position
 			g_root_node->updateCollisionTree(&identity, 1.0);
-
-			//if (g_cam_node->checkCollision(g_root_node, true) == true)
-			//{
-			//	// if there is a collision, restore camera and camera node positions
-			//	pCamera->strafe(-0.002f);
-			//	g_cam_node->SetXPos(pCamera->getX()); //15
-			//	g_cam_node->SetYPos(pCamera->getY());//15
-			//	g_cam_node->SetZPos(pCamera->getZ());//15
-
-
-			//}
 		}
 	}
-
-	if (pCamera->getY() > 0)
+	else if (pCamera->getY() >0)
 	{
 		pCamera->moveUp(-2.5f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
 		g_cam_node->SetZPos(pCamera->getZ());
+
+		g_pParticleGenerator->setIsActive(false);
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 	}
 	pCamera->rotate(g_pInput->GetMouseX());
 	pCamera->rotateInX(g_pInput->GetMouseY());
 
-	/*if (g_pInput->IsMouseButtonPressed(0))
-	{
-	pCamera->moveUp(10.0f);
-	}
-	if (g_pInput->IsMouseButtonPressed(1))
-	{
-	pCamera->moveUp(-10.0f);
-	}*/
-
-
-	//g_2DText->AddText(to_string( GameTimer::getInstance()->GameTime()), -1.0, +1.0,  16/9 *0.2);
-	g_2DText->AddText("good luck"+ std::to_string((int)(1.0f/GameTimer::getInstance()->DeltaTime())), -1.0, +1.0, 16 / 9 * 0.1);
+	g_2DText->AddText("good luck FPS "+ std::to_string((int)(1.0f/GameTimer::getInstance()->DeltaTime())), -1.0, +1.0, 16 / 9 * 0.1);
+	
 	// Clear the back buffer - choose a colour you like
 	float rgba_clear_colour[4] = { 0.1f, 0.2f, 0.6f, 1.0f };
 	m_pImmediateContext->ClearRenderTargetView(g_pBackBufferRTView, rgba_clear_colour);
 
 	m_pImmediateContext->ClearDepthStencilView(g_pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	XMMATRIX world, projection2, view2;
+	XMMATRIX world, projection, view;
 	world = XMMatrixIdentity();
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 1000);
+	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 0.1, 1000);
 	if (!changeCamera)
 	{
-		view2 = pCamera->GetViewMatix();
+		view = pCamera->GetViewMatix();
 	}
 	else
 	{
-		//pCamera2->rotatePitch(1);
-		view2 = pCamera2->GetViewMatix();
+		view = pCamera2->GetViewMatix();
 	}
-	g_pSkybox->Draw(&view2, &projection2);
+	g_pSkybox->Draw(&view, &projection);
 	
-	//Some things I need to work out
-	//m_pImmediateContext->VSSetShader(g_pVertexShader, 0, 0);
-	//m_pImmediateContext->PSSetShader(g_pPixelShader, 0, 0);
-	//m_pImmediateContext->IASetInputLayout(g_pInputLayout);
-
 	//lighting
 	g_directional_light_shines_from = XMVectorSet(g_lightX, 0.0f, -1.0f, 0.0f);
-	g_directional_light_colour = XMVectorSet(g_DirectionalColours, g_DirectionalColours, g_DirectionalColours, 1.0f);//WHITE??? 
+	g_directional_light_colour = XMVectorSet(g_DirectionalColours, g_DirectionalColours, g_DirectionalColours, 1.0f); 
 	g_ambient_light_colour = XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f);//dark grey - always use a small value for ambient lighting
 
 
-	g_pModel->setdirectionalLightColour(&g_directional_light_colour);
-	g_pModel->setDirectionLightVector(&g_directional_light_shines_from);
-	g_pModel->setAmbientLightColour(&g_ambient_light_colour);
 
-	//g_pModel->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	//g_pModel->lookAt_XZ(g_pModel3->GetXPos(), g_pModel3->GetZPos());
-	//g_pModel->moveForward(0.001f);
-
-	if (g_pModel->CheckCollision(g_pModel3))
-	{
-		DebugBreak;
-		//g_pModel->moveForward(-0.001f);
-	}
-	//g_pModel->Draw(&view2, &projection2);
-
-
-	/*g_pModel2->setdirectionalLightColour(&g_directional_light_colour);
-	g_pModel2->setDirectionLightVector(&g_directional_light_shines_from);
-	g_pModel2->setAmbientLightColour(&g_ambient_light_colour);
-*/
-	//g_pModel2->lookAt_XZ(pCamera->getX(), pCamera->getZ());
-	//g_pModel->moveForward(0.001f);
-	//g_pModel2->Draw(&view2, &projection2);
-
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 10000);
-
-	g_pModel3->setdirectionalLightColour(&g_directional_light_colour);
-	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
-	g_pModel3->setAmbientLightColour(&g_ambient_light_colour);
-
-	/*g_node1->SetXPos(10.0f);
-	g_node2->SetYPos(10.0f);*/
-
-
-	//g_root_node->execute(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
-	//g_pModel3->lookAt_XZ(g_pModel->GetXPos(), g_pModel->GetZPos());
-	//g_pModel3->moveForward(0.001f);
-
-	if (g_pModel3->CheckCollision(g_pModel))
-	{
-		DebugBreak;
-		//g_pModel3->moveForward(-0.001f);
-
-	}
-	//g_pModel3->Draw(&view2, &projection2);
-	//g_pGameObject->setLightingValues(&g_directional_light_shines_from, &g_directional_light_colour, &g_ambient_light_colour);
-	//g_pGameObject->update(&view2, &projection2);
-	//g_pParticleGenerator->lookAt_XZ(pCamera->getX(), pCamera->getZ());
 
 	m_LevelManager->passCameraPos(pCamera->getX(), pCamera->getZ());
-	m_LevelManager->update(&world, &view2, &projection2, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
-	//m_LevelManager->update(&world, &view2, &projection2);
-	//render text
+	m_LevelManager->update(&world, &view, &projection, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
+	//m_LevelManager->update(&world, &view, &projection);
+
+	//Change blend type to enable alphablending
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
-	g_pParticleGenerator->Draw(&view2, &projection2, &pCamera->GetCameraPos());
+	g_pParticleGenerator->Draw(&view, &projection, &pCamera->GetCameraPos());
 	g_2DText->RenderText();
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendDisable, 0, 0xfffffff);
 	// Display what has just been rendered
@@ -340,26 +254,6 @@ HRESULT GameManager::InitialiseGraphics(void)
 {
 	HRESULT hr = S_OK;
 
-	
-
-	g_pModel = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pModel->LoadObjModel((char*)"assets/Sphere.obj",0);
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
-	//g_pModel2 = new Model(m_pD3DDevice, m_pImmediateContext);
-	//hr = g_pModel2->LoadObjModel((char*)"assets/plane.obj", 0);
-	//if (FAILED(hr))//Return an error code if failed
-	//{
-	//	return hr;
-	//}
-	g_pModel3 = new Model(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pModel3->LoadObjModel((char*)"assets/PointySphere.obj", 0);
-	if (FAILED(hr))//Return an error code if failed
-	{
-		return hr;
-	}
 
 	pCamera = new camera(0.0, 0.0, -0.5, 0.0);
 	pCamera2 = new camera(0, 10, 0, 0.0);
@@ -371,28 +265,6 @@ HRESULT GameManager::InitialiseGraphics(void)
 		return hr;
 	}
 
-	g_pGameObject = new GameObject(m_pD3DDevice, m_pImmediateContext);
-	hr = g_pGameObject->CreateModel((char*)"assets/teapot.obj", (char*)"assets/texture.bmp", (char*)"assets/texture3.png");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-	hr = g_pModel->AddTexture((char*)"assets/texture.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	//hr = g_pModel2->AddTexture((char*)"assets/texture.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	hr = g_pModel3->AddTexture((char*)"assets/texture2.bmp");
-	if (FAILED(hr))
-	{
-		return hr;
-	}
 	hr = g_pSkybox->AddTexture((char*)"assets/DaylightSkybox.dds");
 	if (FAILED(hr))
 	{
@@ -400,46 +272,24 @@ HRESULT GameManager::InitialiseGraphics(void)
 	}
 	g_pParticleGenerator = new ParticleGenerator(m_pD3DDevice, m_pImmediateContext);
 	g_pParticleGenerator->ParticleFactory();
-	g_pParticleGenerator->setIsActive(true);
+	g_pParticleGenerator->setIsActive(false);
 	g_2DText = new Text2D("assets/font3.png", m_pD3DDevice, m_pImmediateContext);
 
 	g_camObject = new GameObject(m_pD3DDevice, m_pImmediateContext);
 	g_camObject->CreateModel((char*)"assets/Sphere.obj", (char*)"assets/texture.bmp");
 
 	g_root_node = new SceneNode();
-	//g_node1 = new SceneNode();
-	//g_node2 = new SceneNode();
 	g_cam_node = new SceneNode();
-	//g_node1->SetModel(g_pModel);
-	//g_node2->SetModel(g_pModel3);
 	g_cam_node->SetGameObject(g_camObject);
-
-	//g_root_node->addChildNode(g_node1);
-	//g_node1->addChildNode(g_node2);
 	g_root_node->addChildNode(g_cam_node);
 
 	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext, g_root_node, g_cam_node);
 	m_LevelManager->ReadFromFile("assets/level.txt");
-	//g_pModel->SetZPos(10.0f);
-	//g_pModel->SetXPos(10.0f);
 
-	//g_pModel2->SetXPos(0.0f);
-	//g_pModel2->SetYPos(-10.0f);
-	//g_pModel2->SetZPos(0.0f);
-	//g_pModel2->SetScale(100.0f);
-
-	//g_pModel3->SetXPos(-10.0f);
-	////g_pModel3->SetYPos(4.0f);
-	//g_pModel2->SetZPos(10.0f);
-	//g_pModel3->SetZPos(100.0f);
-	//g_pModel3->SetScale(1.0f);
 	pCamera2->rotatePitch(-90.0f);
-	pCamera->strafe(-1);
 	g_cam_node->SetXPos(pCamera->getX()); //15
 	g_cam_node->SetYPos(pCamera->getY());//15
 	g_cam_node->SetZPos(pCamera->getZ());//15
-
-	//pCamera->rotateInX(3);
 	return hr;
 }
 

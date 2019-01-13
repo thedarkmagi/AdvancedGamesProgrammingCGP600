@@ -135,10 +135,10 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 					m_age = 2.0f;
 					m_untilParticle = 0.008f;
 					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
-					(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne());
-					(*it)->gravity = 4.5f;
-					(*it)->position = XMFLOAT3(0.0f, 1.0f, 3.0f);
-					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne(), 2.50f, RandomNegOneToPosOne());
+					(*it)->color = XMFLOAT4(0.6f, 0.6f, 0.6f, 0.2f);
+					(*it)->gravity = -2.5f;
+					(*it)->position = XMFLOAT3(m_x, m_y, m_z);
+					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne()*5, 0, RandomNegOneToPosOne() * 5);
 						////////////////////////////////////////////////////////////////////////////////////////////////
 						break;
 				}
@@ -251,27 +251,6 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 	particleCB.WorldViewProjection = world * (*view)*(*projection);
 	particleCB.color = one->color;
 
-#pragma region probably wrong commented render code
-	//m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-
-	//m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &particleCB, 0, 0);
-	//m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-
-	//m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-
-	//m_pImmediateContext->VSSetShader(m_pVShader, 0, 0);
-	//m_pImmediateContext->PSSetShader(m_pPShader, 0, 0);
-	//m_pImmediateContext->IASetInputLayout(m_pInputLayout);
-
-	//m_pImmediateContext->PSSetSamplers(0, 1, &m_pSampler0);
-	//m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture0);
-
-
-	//m_pImmediateContext->Draw(6, 0);
-#pragma endregion
-	
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
 	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, 0, &particleCB, 0, 0);
 
