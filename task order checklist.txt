@@ -2,8 +2,8 @@
 - Inverse and Transpose  ( inverse mostly )   ( see advance tut 09 )  -- effectively allows a possible 2 marks 
 - specular highlights   ( and well all the other lightings eh ) 
 - AI does something on collision with player
-- can fully explore and interact with environment  (  ) 
 
-- change particles shape/colour based on use -2 
+
+
 - pixel shader for lighting 
 - evidence of no memory leaks/dangling pointers - show evidence somehow??

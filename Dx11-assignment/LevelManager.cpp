@@ -52,8 +52,8 @@ void LevelManager::ReadFromFile(string input)
 						//tempNode->SetModel(temp->getModel());#
 						tempNode->SetGameObject(temp);
 						m_rootNode->addChildNode(tempNode);
-						tempNode->SetXPos(i*2);
-						tempNode->SetZPos(j*2);
+						tempNode->SetXPos(i*2-5);
+						tempNode->SetZPos(j*2 - 5);
 						break;
 					case 'c':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
@@ -63,8 +63,8 @@ void LevelManager::ReadFromFile(string input)
 						//tempNode->SetModel(temp->getModel());#
 						tempNode->SetGameObject(temp);
 						m_rootNode->addChildNode(tempNode);
-						tempNode->SetXPos(i * 2);
-						tempNode->SetZPos(j * 2);
+						tempNode->SetXPos(i * 2 - 5);
+						tempNode->SetZPos(j * 2 - 5);
 
 						//tempNode->SetScale(2.0f);
 						nodeHierarchy.push_back(tempNode);
@@ -77,8 +77,8 @@ void LevelManager::ReadFromFile(string input)
 						//tempNode->SetModel(temp->getModel());#
 						tempNode->SetGameObject(temp);
 						m_rootNode->addChildNode(tempNode);
-						tempNode->SetXPos(i * 2);
-						tempNode->SetZPos(j * 2);
+						tempNode->SetXPos(i * 2 - 5);
+						tempNode->SetZPos(j * 2 - 5);
 						tempNode->SetScale(0.2f);
 						//nodeHierarchy.push_back(tempNode);
 						break;
@@ -90,8 +90,8 @@ void LevelManager::ReadFromFile(string input)
 						//tempNode->SetModel(temp->getModel());#
 						tempNode->SetGameObject(temp);
 						m_rootNode->addChildNode(tempNode);
-						tempNode->SetXPos(i * 2);
-						tempNode->SetZPos(j * 2);
+						tempNode->SetXPos(i * 2 - 5);
+						tempNode->SetZPos(j * 2 - 5);
 						tempNode->SetScale(0.5f);
 						nodeHierarchy.push_back(tempNode);
 						break;
@@ -103,8 +103,8 @@ void LevelManager::ReadFromFile(string input)
 						//tempNode->SetModel(temp->getModel());#
 						tempNode->SetGameObject(temp);
 						m_rootNode->addChildNode(tempNode);
-						tempNode->SetXPos(i * 2);
-						tempNode->SetZPos(j * 2);
+						tempNode->SetXPos(i * 2 - 5);
+						tempNode->SetZPos(j * 2 - 5);
 						tempNode->SetScale(0.2f);
 						nodeHierarchy.push_back(tempNode);
 						break;

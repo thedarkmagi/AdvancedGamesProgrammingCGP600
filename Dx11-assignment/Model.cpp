@@ -322,18 +322,7 @@ void Model::Draw(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection)
 HRESULT Model::AddTexture(char* filename)
 {
 	HRESULT hr = S_OK;
-	
-	//// setup texture buffer
-	//D3D11_SAMPLER_DESC sampler_desc;
-	//ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	//sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	//sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	//sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	//sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	//sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-	//m_pD3DDevice->CreateSamplerState(&sampler_desc, &m_pSampler0);
 
-	//D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename, NULL, NULL, &m_pTexture0, NULL);
 	TextureManager::TextureNSampler* temp = TextureManager::getInstance()->getTexture(filename, m_pD3DDevice, false);
 	m_pSampler0 = temp->m_pSampler0;
 	m_pTexture0 = temp->m_pTexture0;
@@ -347,18 +336,6 @@ HRESULT Model::AddTexture(char * filename, char * filename2)
 {
 	HRESULT hr = S_OK;
 	m_twoTextures = true;
-	//// setup texture buffer
-	//D3D11_SAMPLER_DESC sampler_desc;
-	//ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	//sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	//sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	//sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	//sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	//sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-	//m_pD3DDevice->CreateSamplerState(&sampler_desc, &m_pSampler0);
-
-	//D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename, NULL, NULL, &m_pTexture0, NULL);
-	//D3DX11CreateShaderResourceViewFromFile(m_pD3DDevice, filename2, NULL, NULL, &m_pTexture1, NULL);
 	TextureManager::TextureNSampler* temp = TextureManager::getInstance()->getTexture(filename, filename2, m_pD3DDevice, true);
 
 	m_pSampler0 = temp->m_pSampler0;

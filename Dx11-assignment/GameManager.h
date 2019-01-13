@@ -48,13 +48,9 @@ private:
 	XMVECTOR g_directional_light_colour;
 	XMVECTOR g_ambient_light_colour;
 
-	// testing stuff 
-	Model *g_pModel;
-	//Model *g_pModel2;
-	Model *g_pModel3;
 	input *g_pInput;
 	skybox *g_pSkybox;
-	GameObject *g_pGameObject;
+	GameObject *g_pGround;
 	ParticleGenerator* g_pParticleGenerator;
 
 	float g_lightX = 1.5f;

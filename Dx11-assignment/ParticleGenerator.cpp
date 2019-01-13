@@ -19,6 +19,7 @@ ParticleGenerator::ParticleGenerator(ID3D11Device * device, ID3D11DeviceContext 
 	m_zAngle = 0.0f;
 	m_scale = 0.50f;
 	m_twoTextures = false;
+	pType = DustCloud;
 
 	for (int i = 0; i < 100; i++)
 	{
@@ -135,13 +136,23 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 					m_age = 2.0f;
 					m_untilParticle = 0.008f;
 					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
-					(*it)->color = XMFLOAT4(0.6f, 0.6f, 0.6f, 0.2f);
-					(*it)->gravity = -2.5f;
-					(*it)->position = XMFLOAT3(m_x, m_y, m_z);
-					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne()*5, 0, RandomNegOneToPosOne() * 5);
+					(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne());
+					(*it)->gravity = 4.5f;
+					(*it)->position = XMFLOAT3(0.0f, 1.0f, 3.0f);
+					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne(), 2.50f, RandomNegOneToPosOne());
 						////////////////////////////////////////////////////////////////////////////////////////////////
 						break;
 				}
+				case DustCloud:
+					m_age = 2.0f;
+					m_untilParticle = 0.008f;
+					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
+					(*it)->color = XMFLOAT4(0.6f, 0.6f, 0.6f, 0.2f);
+					(*it)->gravity = -2.5f;
+					(*it)->position = XMFLOAT3(m_x, m_y, m_z);
+					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne() * 5, 0, RandomNegOneToPosOne() * 5);
+					////////////////////////////////////////////////////////////////////////////////////////////////
+					break;
 				default:
 				{
 					break;
@@ -165,7 +176,8 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 
 			switch (pType)
 			{
-				case RAINBOW_FOUNTAIN:
+				
+				default:
 				{
 					/////////////////////////ALL of this is adjustable for different effects///////////////////////////////////////////////////////////
 					(*it)->age += GameTimer::getInstance()->DeltaTime();
@@ -174,10 +186,6 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 					(*it)->position.y += (*it)->velocity.y*(GameTimer::getInstance()->DeltaTime());
 					(*it)->position.z += (*it)->velocity.z*(GameTimer::getInstance()->DeltaTime());
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					break;
-				}
-				default:
-				{
 					break;
 				}
 			}
@@ -195,6 +203,13 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 				}
 				default:
 				{
+					/*set scale and world transforms here*/
+					world *= XMMatrixScaling(0.1f, 0.1f, 0.1f);
+					//world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
+					lookAt_XZ(cameraPosition->x, cameraPosition->z);
+					world *= XMMatrixRotationX(XMConvertToRadians(m_xAngle));
+					world *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
+					world *= XMMatrixRotationZ(XMConvertToRadians(m_zAngle));
 					break;
 				}
 			}

@@ -42,7 +42,7 @@ private:
 	float m_timePrevious;
 	float m_untilPaticle;
 	float m_age;
-	enum type { RAINBOW_FOUNTAIN };
+	enum type { RAINBOW_FOUNTAIN, DustCloud };
 	type pType;
 	float m_untilParticle;
 	std::list<Particle*> m_free;

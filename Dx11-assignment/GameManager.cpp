@@ -239,6 +239,8 @@ void GameManager::RenderFrame(void)
 
 	m_LevelManager->passCameraPos(pCamera->getX(), pCamera->getZ());
 	m_LevelManager->update(&world, &view, &projection, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
+	g_pGround->setLightingValues(&g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
+	g_pGround->update(&view, &projection);
 	//m_LevelManager->update(&world, &view, &projection);
 
 	//Change blend type to enable alphablending
@@ -270,6 +272,14 @@ HRESULT GameManager::InitialiseGraphics(void)
 	{
 		return hr;
 	}
+	g_pGround = new GameObject(m_pD3DDevice, m_pImmediateContext);
+	hr = g_pGround->CreateModel((char*)"assets/plane.obj", (char*)"assets/texture.bmp", (char*)"assets/texture3.png");
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	g_pGround->getModel()->SetScale(0.5f);
+	g_pGround->getModel()->SetYPos(-1);
 	g_pParticleGenerator = new ParticleGenerator(m_pD3DDevice, m_pImmediateContext);
 	g_pParticleGenerator->ParticleFactory();
 	g_pParticleGenerator->setIsActive(false);
