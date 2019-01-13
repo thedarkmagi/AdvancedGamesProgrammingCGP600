@@ -30,6 +30,7 @@ public:
 	bool checkCollision(SceneNode* compare_tree, SceneNode* object_tree_root, bool checkChilden);
 	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, bool checkChilden);
 	bool checkCollisionRay(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, SceneNode* compare_tree, SceneNode* object_tree_root, bool checkChilden);
+	bool checkCollisionRayFromCircle(ObjFileModel::xyz* ray, ObjFileModel::xyz* rayDirection, XMVECTOR p1, XMVECTOR p2, XMVECTOR p3);
 	bool lookAt_XZ(float x, float z);
 	bool lookAt_XZ(float x, float z, SceneNode* root_node);
 	bool moveForward(float amount);

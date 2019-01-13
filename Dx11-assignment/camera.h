@@ -11,6 +11,7 @@ public:
 	camera(float x, float y, float z, float cameraRotation);
 	~camera();
 	void rotate(float nDegrees);
+	void rotatePitch(float nDegrees);
 	void forward(float distance);
 	void up();
 	void strafe(float distance);

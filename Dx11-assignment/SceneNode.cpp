@@ -153,7 +153,7 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 			(compare_tree->m_pGameObject->getModel()->GetBoundingSphereRadius() * compare_tree->m_world_scale) +
 			(this->m_pGameObject->getModel()->GetBoundingSphereRadius() * m_world_scale))
 		{
-			return true;
+			//return true;
 			for (int i = 0; i < compare_tree->m_pGameObject->getModel()->getObject()->numverts; i += 3)
 			{
 				XMVECTOR p1 = XMVectorSet(compare_tree->m_pGameObject->getModel()->getObject()->vertices[i].Pos.x,
@@ -185,7 +185,7 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 				rx = x1 - x2;
 				ry = y1 - y2;
 				rz = z1 - z2;
-				if (checkCollisionRay(&floatsToXYZ(x1, y1, z1), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				if (checkCollisionRayFromCircle(&floatsToXYZ(x1, y1, z1), &floatsToXYZ(rx, ry, rz), p1, p2, p3))
 				{
 					return true;
 				}
@@ -193,14 +193,14 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 				rx = x2 - x3;
 				ry = y2 - y3;
 				rz = z2 - z3;
-				if (checkCollisionRay(&floatsToXYZ(x2, y2, z2), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				if (checkCollisionRayFromCircle(&floatsToXYZ(x2, y2, z2), &floatsToXYZ(rx, ry, rz), p1, p2, p3))
 				{
 					return true;
 				}
 				rx = x3 - x1;
 				ry = y3 - y1;
 				rz = z3 - z1;
-				if (checkCollisionRay(&floatsToXYZ(x3, y3, z3), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				if (checkCollisionRayFromCircle(&floatsToXYZ(x3, y3, z3), &floatsToXYZ(rx, ry, rz), p1, p2, p3))
 				{
 					return true;
 				}
@@ -236,7 +236,7 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 				rx = x1 - x2;
 				ry = y1 - y2;
 				rz = z1 - z2;
-				if (checkCollisionRay(&floatsToXYZ(x1, y1, z1), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				if (checkCollisionRayFromCircle(&floatsToXYZ(x1, y1, z1), &floatsToXYZ(rx, ry, rz),p1,p2,p3))
 				{
 					return true;
 				}
@@ -244,14 +244,14 @@ bool SceneNode::checkCollision(SceneNode * compare_tree, SceneNode * object_tree
 				rx = x2 - x3;
 				ry = y2 - y3;
 				rz = z2 - z3;
-				if (checkCollisionRay(&floatsToXYZ(x2, y2, z2), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				if (checkCollisionRayFromCircle(&floatsToXYZ(x2, y2, z2), &floatsToXYZ(rx, ry, rz), p1, p2, p3))
 				{
 					return true;
 				}
 				rx = x3 - x1;
 				ry = y3 - y1;
 				rz = z3 - z1;
-				if (checkCollisionRay(&floatsToXYZ(x3, y3, z3), &floatsToXYZ(rx, ry, rz), compare_tree, object_tree_root, false))
+				if (checkCollisionRayFromCircle(&floatsToXYZ(x3, y3, z3), &floatsToXYZ(rx, ry, rz), p1, p2, p3))
 				{
 					return true;
 				}
@@ -354,6 +354,22 @@ bool SceneNode::checkCollisionRay(ObjFileModel::xyz * ray, ObjFileModel::xyz * r
 					return true;
 				}
 			}
+		}
+	}
+	return false;
+}
+
+bool SceneNode::checkCollisionRayFromCircle(ObjFileModel::xyz * ray, ObjFileModel::xyz * rayDirection, XMVECTOR p1, XMVECTOR p2, XMVECTOR p3)
+{
+	maths::Plane plane = maths::getInstance()->planeEquation(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3));
+	float startOfRay = maths::getInstance()->comparePlaneToPoint(plane, *ray);
+	float endOfRay = maths::getInstance()->comparePlaneToPoint(plane, addTogether(ray, rayDirection));
+	if (maths::getInstance()->sign(startOfRay) > 0 && maths::getInstance()->sign(endOfRay) < 0 || maths::getInstance()->sign(startOfRay) < 0 && maths::getInstance()->sign(endOfRay) > 0)
+	{
+		ObjFileModel::xyz intersectionPoint = maths::getInstance()->planeIntersection(&plane, ray, &addTogether(ray, rayDirection));
+		if (maths::getInstance()->in_triangle(&XMVecToXYZ(p1), &XMVecToXYZ(p2), &XMVecToXYZ(p3), &intersectionPoint))
+		{
+			return true;
 		}
 	}
 	return false;

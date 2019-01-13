@@ -180,6 +180,17 @@ void GameManager::RenderFrame(void)
 
 		}
 	}
+	if (g_pInput->IsKeyPressed(DIK_TAB))
+	{
+		if (!changeCamera)
+		{
+			changeCamera = true;
+		}
+		else
+		{
+			changeCamera = false;
+		}
+	}
 	pCamera->rotate(g_pInput->GetMouseX());
 	pCamera->rotateInX(g_pInput->GetMouseY());
 
@@ -204,7 +215,14 @@ void GameManager::RenderFrame(void)
 	XMMATRIX world, projection2, view2;
 	world = XMMatrixIdentity();
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
-	view2 = pCamera->GetViewMatix();
+	if (!changeCamera)
+	{
+		view2 = pCamera->GetViewMatix();
+	}
+	else
+	{
+		view2 = pCamera2->GetViewMatix();
+	}
 	g_pSkybox->Draw(&view2, &projection2);
 	
 	//Some things I need to work out
@@ -232,8 +250,8 @@ void GameManager::RenderFrame(void)
 		//g_pModel->moveForward(-0.001f);
 	}
 	//g_pModel->Draw(&view2, &projection2);
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
-	view2 = pCamera->GetViewMatix();
+
+
 	/*g_pModel2->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel2->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel2->setAmbientLightColour(&g_ambient_light_colour);
@@ -243,7 +261,7 @@ void GameManager::RenderFrame(void)
 	//g_pModel2->Draw(&view2, &projection2);
 
 	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
-	view2 = pCamera->GetViewMatix();
+
 	g_pModel3->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
 	g_pModel3->setAmbientLightColour(&g_ambient_light_colour);
@@ -305,6 +323,8 @@ HRESULT GameManager::InitialiseGraphics(void)
 	}
 
 	pCamera = new camera(0.0, 0.0, -0.5, 0.0);
+	pCamera2 = new camera(0.0, 10.0, -0.5, 0.0);
+	pCamera2->rotatePitch(90);
 	g_pSkybox = new skybox(m_pD3DDevice, m_pImmediateContext, pCamera);
 	hr = g_pSkybox->InitialiseGraphics();
 	if (FAILED(hr))//Return an error code if failed

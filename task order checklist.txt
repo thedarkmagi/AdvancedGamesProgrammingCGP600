@@ -3,7 +3,7 @@
 - specular highlights   ( and well all the other lightings eh ) 
 - AI does something on collision with player
 - can fully explore and interact with environment  ( + extra actions  Jump or some thing? ) 
-- second camera. 
-- change particles shape/colour based on use
+
+- change particles shape/colour based on use -2 
 - pixel shader for lighting 
 - evidence of no memory leaks/dangling pointers - show evidence somehow??

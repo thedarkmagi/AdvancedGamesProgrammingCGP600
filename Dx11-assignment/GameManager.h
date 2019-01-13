@@ -61,6 +61,8 @@ private:
 	float g_DirectionalColours;
 	Text2D* g_2DText; 
 	camera* pCamera; 
+	camera* pCamera2;
+	bool changeCamera;
 
 	// alpha blending variables
 	ID3D11BlendState* m_pAlphaBlendEnable;

@@ -26,6 +26,14 @@ void camera:: rotate(float nDegrees)
 	m_dz = cos(m_camera_rotation * (XM_PI / 180));
 }
 
+void camera::rotatePitch(float nDegrees)
+{
+	m_camera_rotationX += nDegrees;
+
+	m_dy = sin(m_camera_rotationX *(XM_PI / 180));
+}
+
+
 void camera::forward(float distance)
 {
 	m_x += distance * m_dx *GameTimer::getInstance()->DeltaTime();

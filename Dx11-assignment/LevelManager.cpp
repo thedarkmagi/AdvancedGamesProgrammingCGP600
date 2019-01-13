@@ -93,7 +93,7 @@ void LevelManager::ReadFromFile(string input)
 						tempNode->SetXPos(i * 2);
 						tempNode->SetZPos(j * 2);
 						tempNode->SetScale(0.5f);
-						//nodeHierarchy.push_back(tempNode);
+						nodeHierarchy.push_back(tempNode);
 						break;
 					case 's':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
