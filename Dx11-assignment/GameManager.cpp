@@ -214,13 +214,14 @@ void GameManager::RenderFrame(void)
 
 	XMMATRIX world, projection2, view2;
 	world = XMMatrixIdentity();
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
+	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 1000);
 	if (!changeCamera)
 	{
 		view2 = pCamera->GetViewMatix();
 	}
 	else
 	{
+		//pCamera2->rotatePitch(1);
 		view2 = pCamera2->GetViewMatix();
 	}
 	g_pSkybox->Draw(&view2, &projection2);
@@ -260,7 +261,7 @@ void GameManager::RenderFrame(void)
 	//g_pModel->moveForward(0.001f);
 	//g_pModel2->Draw(&view2, &projection2);
 
-	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 250.0);
+	projection2 = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 1.0, 10000);
 
 	g_pModel3->setdirectionalLightColour(&g_directional_light_colour);
 	g_pModel3->setDirectionLightVector(&g_directional_light_shines_from);
@@ -323,8 +324,8 @@ HRESULT GameManager::InitialiseGraphics(void)
 	}
 
 	pCamera = new camera(0.0, 0.0, -0.5, 0.0);
-	pCamera2 = new camera(0.0, 10.0, -0.5, 0.0);
-	pCamera2->rotatePitch(90);
+	pCamera2 = new camera(0, 10, 0, 0.0);
+	
 	g_pSkybox = new skybox(m_pD3DDevice, m_pImmediateContext, pCamera);
 	hr = g_pSkybox->InitialiseGraphics();
 	if (FAILED(hr))//Return an error code if failed
@@ -394,6 +395,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 	//g_pModel2->SetZPos(10.0f);
 	//g_pModel3->SetZPos(100.0f);
 	//g_pModel3->SetScale(1.0f);
+	pCamera2->rotatePitch(-90.0f);
 	pCamera->strafe(-1);
 	g_cam_node->SetXPos(pCamera->getX()); //15
 	g_cam_node->SetYPos(pCamera->getY());//15

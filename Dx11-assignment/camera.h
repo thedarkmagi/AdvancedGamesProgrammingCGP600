@@ -35,6 +35,7 @@ private:
 	float m_dy;
 	float m_camera_rotation;
 	float m_camera_rotationX;
+	float m_TopDownCamera;
 
 	XMVECTOR m_position;
 	XMVECTOR m_lookat;

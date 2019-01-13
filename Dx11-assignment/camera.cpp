@@ -7,10 +7,12 @@ camera::camera(float x, float y, float z, float cameraRotation)
 	m_x = x;
 	m_y = y;
 	m_z = z;
-	m_camera_rotation = cameraRotation;
-
+	m_camera_rotation = cameraRotation; 
+	m_camera_rotationX = 0;
+	m_TopDownCamera = 0;
 	m_dx = sin(m_camera_rotation *(XM_PI / 180));
 	m_dz = cos(m_camera_rotation * (XM_PI / 180));
+	m_dy = sin(m_TopDownCamera *(XM_PI / 180));
 	up();
 }
 
@@ -28,9 +30,16 @@ void camera:: rotate(float nDegrees)
 
 void camera::rotatePitch(float nDegrees)
 {
-	m_camera_rotationX += nDegrees;
-
-	m_dy = sin(m_camera_rotationX *(XM_PI / 180));
+	m_TopDownCamera += nDegrees;
+	if (m_TopDownCamera > 360)
+	{
+		m_TopDownCamera -= 360;
+	}
+	if (m_TopDownCamera < -360)
+	{
+		m_TopDownCamera += 360;
+	}
+	m_dy = sin(m_TopDownCamera *(XM_PI / 180));
 }
 
 
