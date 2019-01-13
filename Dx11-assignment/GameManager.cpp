@@ -191,6 +191,44 @@ void GameManager::RenderFrame(void)
 			changeCamera = false;
 		}
 	}
+	if (g_pInput->IsKeyPressed(DIK_SPACE))
+	{
+		if (pCamera->getY() < 1.75f)
+		{
+			pCamera->moveUp(5.002f);
+			// set camera node to the position of the camera
+			g_cam_node->SetXPos(pCamera->getX());
+			g_cam_node->SetYPos(pCamera->getY());
+			g_cam_node->SetZPos(pCamera->getZ());
+
+			XMMATRIX identity = XMMatrixIdentity();
+
+			// update tree to reflect new camera position
+			g_root_node->updateCollisionTree(&identity, 1.0);
+
+			//if (g_cam_node->checkCollision(g_root_node, true) == true)
+			//{
+			//	// if there is a collision, restore camera and camera node positions
+			//	pCamera->strafe(-0.002f);
+			//	g_cam_node->SetXPos(pCamera->getX()); //15
+			//	g_cam_node->SetYPos(pCamera->getY());//15
+			//	g_cam_node->SetZPos(pCamera->getZ());//15
+
+
+			//}
+		}
+	}
+
+	if (pCamera->getY() > 0)
+	{
+		pCamera->moveUp(-2.5f);
+		// set camera node to the position of the camera
+		g_cam_node->SetXPos(pCamera->getX());
+		g_cam_node->SetYPos(pCamera->getY());
+		g_cam_node->SetZPos(pCamera->getZ());
+		// update tree to reflect new camera position
+		g_root_node->updateCollisionTree(&identity, 1.0);
+	}
 	pCamera->rotate(g_pInput->GetMouseX());
 	pCamera->rotateInX(g_pInput->GetMouseY());
 

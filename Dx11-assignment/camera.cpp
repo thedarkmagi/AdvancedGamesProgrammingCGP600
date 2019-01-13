@@ -65,7 +65,7 @@ void camera::strafe(float distance)
 
 void camera::moveUp(float distance)
 {
-	m_y += distance;
+	m_y += distance * GameTimer::getInstance()->DeltaTime();
 }
 
 void camera::rotateInX(float nDegrees)
