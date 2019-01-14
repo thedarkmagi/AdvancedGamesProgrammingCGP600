@@ -322,6 +322,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 	}
 	g_pGround->getModel()->SetScale(0.5f);
 	g_pGround->getModel()->SetYPos(-1);
+	g_pGround->getModel()->setCameraPointer(pCamera);
 	g_pParticleGenerator = new ParticleGenerator(m_pD3DDevice, m_pImmediateContext);
 	g_pParticleGenerator->ParticleFactory();
 	g_pParticleGenerator->setIsActive(false);
@@ -337,6 +338,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 
 	m_LevelManager = new LevelManager(m_pD3DDevice, m_pImmediateContext, g_root_node, g_cam_node);
 	m_LevelManager->ReadFromFile("assets/level.txt");
+	m_LevelManager->setCameraPointer(pCamera);
 
 	pCamera2->rotatePitch(-90.0f);
 	g_cam_node->SetXPos(pCamera->getX()); //15

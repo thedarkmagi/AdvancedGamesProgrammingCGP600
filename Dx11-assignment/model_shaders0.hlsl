@@ -5,6 +5,7 @@ cbuffer CBuffer0
 	float4 directional_light_vector; // 16 bytes;
 	float4 directional_light_colour; // 16 bytes;
 	float4 ambient_light_colour; // 16 bytes;
+    float4 camPosition;
 	bool twoTextures; // 2 bytes
 };
 
@@ -38,8 +39,7 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 
 	output.position = mul(WVPMatrix, position);
 	
-    output.normal = mul(normal, (float3x3)WVPMatrix);
-    
+    output.normal = normalize(mul(normal, (float3x3) WVPMatrix));
     float diffuse_amount = dot((float3) directional_light_vector, normal);
     diffuse_amount = saturate(diffuse_amount);
 
@@ -52,7 +52,7 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 	return output;
 }
 
-float4 ModelPS(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal: NORMAL) : SV_TARGET
+float4 ModelPS(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL) : SV_TARGET
 {
     // this results in some real jank
     // ATTEMPT AT SPECULAR 
@@ -64,11 +64,21 @@ float4 ModelPS(float4 position : SV_POSITION, float4 color : COLOR, float2 texco
     //float3 h = normalize(normalize((float3) directional_light_vector - (float3) worldPos) + lightDir);
 
     //float specLighting = pow(saturate(dot(h, normal)), 5); // magic number is for specular power
-    //float4 default_color = { 1.0, 1.0, 1.0, 1.0 };
+    float4 default_color = { 1.0, 1.0, 1.0, 1.0 };
     //color = saturate(ambient_light_colour + (directional_light_colour * diffuseLighting * 10)
     //+ (default_color * specLighting *10));
+    float4 finalColour = color;
+    float3 toEye = camPosition.xyz - position.xyz;
+    toEye = normalize(toEye);
+    float3 dirToLight = directional_light_vector.xyz - toEye;
+    //phong diffuse 
+    float NDotL = dot(dirToLight, normal);
+    finalColour += default_color * saturate(NDotL);
 
-
-	return  texture0.Sample(sampler0, texcoord) * color;
+    // Blinn specular
+    float3 halfWay = normalize(dirToLight -toEye  );
+    float NDotH = saturate(dot(halfWay, normal));
+    finalColour += default_color * pow(NDotH, 2) * 2;
+    return texture0.Sample(sampler0, texcoord) *  finalColour;
 	
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "objfilemodel.h"
+#include "camera.h"
 class Model
 {
 private:
@@ -27,6 +28,7 @@ private:
 	XMVECTOR* direction_light_vector; // 16 bytes;
 	XMVECTOR* directional_light_colour; // 16 bytes;
 	XMVECTOR* ambient_light_colour; // 16 bytes;
+	camera* m_pCamera;
 
 	void CalculateModelCentrePoint();
 	void CalculaterBoundingSphereRadius();
@@ -82,6 +84,7 @@ public:
 	ObjFileModel* getObject();
 	void SetSampler();
 	void SetTexture();
+	void setCameraPointer(camera* cam);
 #pragma endregion
 };
 

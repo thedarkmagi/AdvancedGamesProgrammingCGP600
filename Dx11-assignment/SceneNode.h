@@ -78,5 +78,6 @@ private:
 	float			m_scale;
 	float			m_world_centre_x, m_world_centre_y, m_world_centre_z, m_world_scale;
 	XMMATRIX m_local_world_matrix;
+	
 };
 

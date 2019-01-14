@@ -39,6 +39,7 @@ public:
 	void update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection);
 
 	void passCameraPos(float x, float z);
+	void setCameraPointer(camera* cam);
 private:
 	vector<string> list;
 	vector<SceneNode*> nodeHierarchy;
@@ -47,8 +48,8 @@ private:
 	SceneNode* m_camNode;
 	ID3D11Device *			m_pD3DDevice;
 	ID3D11DeviceContext*	m_pImmediateContext;
-
-	//temp VALUES PLEASE REPLACE LATER
+	camera* m_pCamera;
+	
 	float cameraX, cameraZ;
 };
 

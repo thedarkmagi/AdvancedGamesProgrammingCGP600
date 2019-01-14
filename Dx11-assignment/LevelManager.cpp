@@ -47,6 +47,7 @@ void LevelManager::ReadFromFile(string input)
 					case 'w':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
 						temp->CreateModel((char*)"assets/cube.obj", (char*)"assets/texture.bmp");
+						temp->getModel()->setCameraPointer(m_pCamera);
 						//questionable if needed
 						//gameObjectList.push_back(temp);
 						//tempNode->SetModel(temp->getModel());#
@@ -58,6 +59,7 @@ void LevelManager::ReadFromFile(string input)
 					case 'c':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
 						temp->CreateModel((char*)"assets/cube.obj", (char*)"assets/texture3.bmp", (char*)"assets/texture3.png");
+						temp->getModel()->setCameraPointer(m_pCamera);
 						//questionable if needed
 						//gameObjectList.push_back(temp);
 						//tempNode->SetModel(temp->getModel());#
@@ -72,6 +74,7 @@ void LevelManager::ReadFromFile(string input)
 					case 'e':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
 						temp->CreateModel((char*)"assets/Sphere.obj", (char*)"assets/texture.bmp");
+						temp->getModel()->setCameraPointer(m_pCamera);
 						gameObjectList.push_back(temp);
 						
 						//tempNode->SetModel(temp->getModel());#
@@ -85,6 +88,7 @@ void LevelManager::ReadFromFile(string input)
 					case 'p':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
 						temp->CreateModel((char*)"assets/giantRobot.obj", (char*)"assets/1pPink.bmp");
+						temp->getModel()->setCameraPointer(m_pCamera);
 						gameObjectList.push_back(temp);
 
 						//tempNode->SetModel(temp->getModel());#
@@ -98,6 +102,7 @@ void LevelManager::ReadFromFile(string input)
 					case 's':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
 						temp->CreateModel((char*)"assets/PointySphere.obj", (char*)"assets/texture.bmp");
+						temp->getModel()->setCameraPointer(m_pCamera);
 						gameObjectList.push_back(temp);
 
 						//tempNode->SetModel(temp->getModel());#
@@ -142,4 +147,9 @@ void LevelManager::passCameraPos(float x, float z)
 {
 	cameraX = x;
 	cameraZ = z;
+}
+
+void LevelManager::setCameraPointer(camera * cam)
+{
+	m_pCamera = cam;
 }

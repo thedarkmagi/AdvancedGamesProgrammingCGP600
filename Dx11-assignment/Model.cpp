@@ -9,9 +9,10 @@ struct MODEL_CONSTANT_BUFFER
 	XMVECTOR direction_light_vector; // 16 bytes;
 	XMVECTOR directional_light_colour; // 16 bytes;
 	XMVECTOR ambient_light_colour; // 16 bytes;
+	XMVECTOR cameraPosition; // 16 bytes;
 	bool	twoTextures;
 };// total 112;
-const int constantBufferByteWidth = 176;
+const int constantBufferByteWidth = 192;
 
 void Model::CalculateModelCentrePoint()
 {
@@ -256,6 +257,7 @@ void Model::Draw(XMMATRIX* view, XMMATRIX* projection)
 	model_cb_values.directional_light_colour = *directional_light_colour;
 	model_cb_values.direction_light_vector = XMVector3Transform(*direction_light_vector, transpose);
 	model_cb_values.direction_light_vector = XMVector3Normalize(model_cb_values.direction_light_vector);
+	model_cb_values.cameraPosition = m_pCamera->GetCameraPos();
 	if (m_twoTextures)
 	{
 		model_cb_values.twoTextures = true;
@@ -549,6 +551,11 @@ XMVECTOR Model::getBoundingSpherePos()
 ObjFileModel * Model::getObject()
 {
 	return m_pObject;
+}
+
+void Model::setCameraPointer(camera * cam)
+{
+	m_pCamera = cam;
 }
 
 #pragma endregion
