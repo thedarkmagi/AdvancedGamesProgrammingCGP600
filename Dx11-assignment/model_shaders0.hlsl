@@ -55,6 +55,12 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 float4 ModelPS(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL) : SV_TARGET
 {
 
+	//float diffuse_amount = dot((float3) directional_light_vector, normal);
+	//diffuse_amount = saturate(diffuse_amount);
+
+	//color = ambient_light_colour + (directional_light_colour * diffuse_amount);
+
+
     float4 default_color = { 1.0, 1.0, 1.0, 1.0 };
 
     float4 finalColour = color;
