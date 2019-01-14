@@ -19,7 +19,7 @@ ParticleGenerator::ParticleGenerator(ID3D11Device * device, ID3D11DeviceContext 
 	m_zAngle = 0.0f;
 	m_scale = 0.50f;
 	m_twoTextures = false;
-	pType = DustCloud;
+	//pType = DustCloud;
 
 	for (int i = 0; i < 100; i++)
 	{
@@ -138,7 +138,7 @@ void ParticleGenerator::Draw(XMMATRIX * view, XMMATRIX * projection, XMVECTOR * 
 					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
 					(*it)->color = XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne());
 					(*it)->gravity = 4.5f;
-					(*it)->position = XMFLOAT3(0.0f, 1.0f, 3.0f);
+					(*it)->position = XMFLOAT3(m_x, m_y, m_z);
 					(*it)->velocity = XMFLOAT3(RandomNegOneToPosOne(), 2.50f, RandomNegOneToPosOne());
 						////////////////////////////////////////////////////////////////////////////////////////////////
 						break;
@@ -259,7 +259,10 @@ void ParticleGenerator::DrawOne(Particle * one, XMMATRIX * view, XMMATRIX * proj
 	XMMATRIX world;
 
 	world = XMMatrixScaling(1.3f, 01.3f, 01.3f);
-	world *= XMMatrixRotationY(XMConvertToRadians(XM_PI));
+	lookAt_XZ(cameraPosition->x, cameraPosition->z);
+	world *= XMMatrixRotationX(XMConvertToRadians(m_xAngle));
+	world *= XMMatrixRotationY(XMConvertToRadians(m_yAngle));
+	world *= XMMatrixRotationZ(XMConvertToRadians(m_zAngle));
 	world *= XMMatrixTranslation(one->position.x, one->position.y, one->position.z);
 
 	Particle_Constant_Buffer particleCB;
@@ -590,6 +593,16 @@ void ParticleGenerator::setIsActive(bool input)
 bool ParticleGenerator::getIsActive()
 {
 	return m_isActive;
+}
+
+void ParticleGenerator::setDustCloud()
+{
+	pType = DustCloud;
+}
+
+void ParticleGenerator::setRainbow()
+{
+	pType = RAINBOW_FOUNTAIN;
 }
 
 #pragma endregion

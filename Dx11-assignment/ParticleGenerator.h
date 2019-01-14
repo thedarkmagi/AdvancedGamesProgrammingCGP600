@@ -109,6 +109,8 @@ public:
 
 	void setIsActive(bool input);
 	bool getIsActive();
+	void setDustCloud();
+	void setRainbow();
 #pragma endregion
 };
 

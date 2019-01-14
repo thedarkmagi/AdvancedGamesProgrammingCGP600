@@ -50,7 +50,7 @@ void GameManager::RenderFrame(void)
 		oldPos.x = pCamera->getX();
 		oldPos.y = pCamera->getY();
 		oldPos.z = pCamera->getZ();
-		pCamera->forward(1.002f);
+		pCamera->forward(1.0f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
@@ -71,7 +71,7 @@ void GameManager::RenderFrame(void)
 			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
 			{
 				// if there is a collision, restore camera and camera node positions
-				pCamera->forward(-1.002f);
+				pCamera->forward(-1.0f);
 				g_cam_node->SetXPos(pCamera->getX()); //15
 				g_cam_node->SetYPos(pCamera->getY());//15
 				g_cam_node->SetZPos(pCamera->getZ());//15
@@ -87,7 +87,7 @@ void GameManager::RenderFrame(void)
 		oldPos.y = pCamera->getY();
 		oldPos.z = pCamera->getZ();
 
-		pCamera->forward(-1.002f);
+		pCamera->forward(-1.0f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
@@ -118,7 +118,13 @@ void GameManager::RenderFrame(void)
 	}
 	if (g_pInput->IsKeyPressed(DIK_A))
 	{
-		pCamera->strafe(-1.002f);
+		
+		ObjFileModel::xyz oldPos;
+		oldPos.x = pCamera->getX();
+		oldPos.y = pCamera->getY();
+		oldPos.z = pCamera->getZ();
+		
+		pCamera->strafe(-1.0f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
 		g_cam_node->SetYPos(pCamera->getY());
@@ -126,21 +132,33 @@ void GameManager::RenderFrame(void)
 
 		XMMATRIX identity = XMMatrixIdentity();
 
+		ObjFileModel::xyz newPos;
+		newPos.x = pCamera->getX();
+		newPos.y = pCamera->getY();
+		newPos.z = pCamera->getZ();
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
 		if (g_cam_node->checkCollision(g_root_node, true) == true)
 		{
-			// if there is a collision, restore camera and camera node positions
-			pCamera->strafe(1.002f);
-			g_cam_node->SetXPos(pCamera->getX()); //15
-			g_cam_node->SetYPos(pCamera->getY());//15
-			g_cam_node->SetZPos(pCamera->getZ());//15
+			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
+			{
+				// if there is a collision, restore camera and camera node positions
+				pCamera->strafe(1.0f);
+				g_cam_node->SetXPos(pCamera->getX()); //15
+				g_cam_node->SetYPos(pCamera->getY());//15
+				g_cam_node->SetZPos(pCamera->getZ());//15
+			}
 
 		}
 	}
 	if (g_pInput->IsKeyPressed(DIK_D))
 	{
+		ObjFileModel::xyz oldPos;
+		oldPos.x = pCamera->getX();
+		oldPos.y = pCamera->getY();
+		oldPos.z = pCamera->getZ();
+
 		pCamera->strafe(1.002f);
 		// set camera node to the position of the camera
 		g_cam_node->SetXPos(pCamera->getX());
@@ -149,16 +167,23 @@ void GameManager::RenderFrame(void)
 
 		XMMATRIX identity = XMMatrixIdentity();
 
+		ObjFileModel::xyz newPos;
+		newPos.x = pCamera->getX();
+		newPos.y = pCamera->getY();
+		newPos.z = pCamera->getZ();
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 
 		if (g_cam_node->checkCollision(g_root_node, true) == true)
 		{
-			// if there is a collision, restore camera and camera node positions
-			pCamera->strafe(-0.002f);
-			g_cam_node->SetXPos(pCamera->getX()); //15
-			g_cam_node->SetYPos(pCamera->getY());//15
-			g_cam_node->SetZPos(pCamera->getZ());//15
+			if (g_root_node->checkCollisionRay(&oldPos, &newPos, g_cam_node, true) == true)
+			{
+				// if there is a collision, restore camera and camera node positions
+				pCamera->strafe(-0.002f);
+				g_cam_node->SetXPos(pCamera->getX()); //15
+				g_cam_node->SetYPos(pCamera->getY());//15
+				g_cam_node->SetZPos(pCamera->getZ());//15
+			}
 
 		}
 	}
@@ -183,10 +208,11 @@ void GameManager::RenderFrame(void)
 			g_cam_node->SetYPos(pCamera->getY());
 			g_cam_node->SetZPos(pCamera->getZ());
 
-			g_pParticleGenerator->SetXPos(pCamera->getX());// +(pCamera->getDX()) * 2);
-			g_pParticleGenerator->SetYPos(pCamera->getY());// + pCamera->getDY() * 2);
-			g_pParticleGenerator->SetZPos(pCamera->getZ());// +pCamera->getDX() * 2);
+			g_pParticleGenerator->SetXPos(pCamera->getX() +(pCamera->getDX()) * 2);
+			g_pParticleGenerator->SetYPos(pCamera->getY() + pCamera->getDY() * 2);
+			g_pParticleGenerator->SetZPos(pCamera->getZ() +pCamera->getDX() * 2);
 			g_pParticleGenerator->setIsActive(true);
+			g_pParticleGenerator->setDustCloud();
 			XMMATRIX identity = XMMatrixIdentity();
 
 			// update tree to reflect new camera position
@@ -205,6 +231,22 @@ void GameManager::RenderFrame(void)
 		// update tree to reflect new camera position
 		g_root_node->updateCollisionTree(&identity, 1.0);
 	}
+	if (g_pInput->IsMouseButtonPressed(0))
+	{
+		if (!g_pParticleGenerator->getIsActive())
+		{
+			g_pParticleGenerator->SetXPos(pCamera->getX() + (pCamera->getDX()) * 2);
+			g_pParticleGenerator->SetYPos(pCamera->getY() + pCamera->getDY() * 2);
+			g_pParticleGenerator->SetZPos(pCamera->getZ() + pCamera->getDX() * 2);
+			g_pParticleGenerator->setIsActive(true);
+			g_pParticleGenerator->setRainbow();
+		}
+		else
+		{
+			g_pParticleGenerator->setIsActive(false);
+		}
+	}
+
 	pCamera->rotate(g_pInput->GetMouseX());
 	pCamera->rotateInX(g_pInput->GetMouseY());
 

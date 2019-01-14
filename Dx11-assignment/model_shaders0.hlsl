@@ -40,7 +40,7 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 	
     output.normal = mul(normal, (float3x3)WVPMatrix);
     
-    float diffuse_amount = dot(directional_light_vector, normal);
+    float diffuse_amount = dot((float3) directional_light_vector, normal);
     diffuse_amount = saturate(diffuse_amount);
 
     output.color = ambient_light_colour + (directional_light_colour * diffuse_amount);
