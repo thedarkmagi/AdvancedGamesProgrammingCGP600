@@ -54,19 +54,9 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
 
 float4 ModelPS(float4 position : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL) : SV_TARGET
 {
-    // this results in some real jank
-    // ATTEMPT AT SPECULAR 
-    //float3 lightDir = normalize(normal - (float3) directional_light_vector);
-    //float diffuseLighting = saturate(dot(normal, lightDir));
-    //float3 ViewVector = float3(-1, 0, 0);
 
-    //float4 worldPos = mul(position, WVPMatrix);
-    //float3 h = normalize(normalize((float3) directional_light_vector - (float3) worldPos) + lightDir);
-
-    //float specLighting = pow(saturate(dot(h, normal)), 5); // magic number is for specular power
     float4 default_color = { 1.0, 1.0, 1.0, 1.0 };
-    //color = saturate(ambient_light_colour + (directional_light_colour * diffuseLighting * 10)
-    //+ (default_color * specLighting *10));
+
     float4 finalColour = color;
     float3 toEye = camPosition.xyz - position.xyz;
     toEye = normalize(toEye);
