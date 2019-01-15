@@ -28,7 +28,7 @@ using namespace std;
 	HWND		g_hWnd = NULL;
 	
 	//will appear in the title bar of window
-	char g_TutorialName[100] = "Assignment Boi's\0";
+	char g_TutorialName[100] = "Advanced Games Programming Assignment\0";
 	D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 	ID3D11Device*           g_pD3DDevice = NULL;
@@ -115,7 +115,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 HRESULT InitialiseWindow(HINSTANCE hInstance, int nCmdShow)
 {
 	//APP name
-	char Name[100] = "Hello My Debt Pit\0";
+	char Name[100] = "Advanced Games Programming Assignment\0";
 
 	//resgister classs
 	WNDCLASSEX wcex = { 0 };
