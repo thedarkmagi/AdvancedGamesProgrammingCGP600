@@ -24,8 +24,6 @@ ObjFileModel * ModelManager::getModel(char * input, ID3D11Device * device, ID3D1
 		ObjFileModel* temp = new ObjFileModel(input, device, deviceContext);
 		map<char*,ObjFileModel*>::iterator it = modelMap.begin();
 		modelMap.insert(it, pair<char*, ObjFileModel*>(input, temp));
-		//modelMap.insert(input, temp);
-		
 		
 		return temp;
 	}

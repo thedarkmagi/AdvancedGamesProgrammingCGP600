@@ -58,9 +58,8 @@ void camera::strafe(float distance)
 {
 	XMVECTOR direction;
 	direction = XMVector3Cross(m_up, m_lookat-m_position);
-	//direction = XMVector3Cross(m_up,direction);
-	m_x += direction.x * distance*GameTimer::getInstance()->DeltaTime();// *m_dx;
-	m_z += direction.z * distance*GameTimer::getInstance()->DeltaTime();// *m_dz;
+	m_x += direction.x * distance*GameTimer::getInstance()->DeltaTime();
+	m_z += direction.z * distance*GameTimer::getInstance()->DeltaTime();
 }
 
 void camera::moveUp(float distance)
@@ -84,14 +83,11 @@ void camera::rotateInX(float nDegrees)
 
 
 XMMATRIX camera::GetViewMatix()
-{
-	
+{	
 	m_position = XMVectorSet(m_x, m_y, m_z, 0.0);
-	//m_position = XMVector3Normalize(m_position);
 	m_lookat = XMVectorSet(m_x + m_dx, m_y + m_dy, m_z + m_dz, 0.0);
 	m_up = XMVectorSet(0.0, 1.0, 0.0, 0.0);
 	XMVECTOR view;
-	//view = XMMatrixLookAtLH(m_position, m_lookat, m_up);
 	return XMMatrixLookAtLH(m_position, m_lookat, m_up);
 }
 

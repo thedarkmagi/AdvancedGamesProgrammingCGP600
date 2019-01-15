@@ -40,6 +40,10 @@ void GameManager::RenderFrame(void)
 	g_pInput->ReadInputStates();
 	XMMATRIX identity = XMMatrixIdentity();
 	g_root_node->updateCollisionTree(&identity, 1.0);
+#pragma region User Inputs
+
+
+
 	if (g_pInput->IsKeyPressed(DIK_ESCAPE))
 	{
 		DestroyWindow(*g_hWnd);
@@ -207,7 +211,7 @@ void GameManager::RenderFrame(void)
 			g_cam_node->SetXPos(pCamera->getX());
 			g_cam_node->SetYPos(pCamera->getY());
 			g_cam_node->SetZPos(pCamera->getZ());
-
+			//updating particle position
 			g_pParticleGenerator->SetXPos(pCamera->getX() +(pCamera->getDX()) * 2);
 			g_pParticleGenerator->SetYPos(pCamera->getY() + pCamera->getDY() * 2);
 			g_pParticleGenerator->SetZPos(pCamera->getZ() +pCamera->getDX() * 2);
@@ -235,6 +239,7 @@ void GameManager::RenderFrame(void)
 	{
 		if (!g_pParticleGenerator->getIsActive())
 		{
+			//updateing particle position
 			g_pParticleGenerator->SetXPos(pCamera->getX() + (pCamera->getDX()) * 2);
 			g_pParticleGenerator->SetYPos(pCamera->getY() + pCamera->getDY() * 2);
 			g_pParticleGenerator->SetZPos(pCamera->getZ() + pCamera->getDX() * 2);
@@ -249,7 +254,8 @@ void GameManager::RenderFrame(void)
 
 	pCamera->rotate(g_pInput->GetMouseX());
 	pCamera->rotateInX(g_pInput->GetMouseY());
-
+#pragma endregion
+	
 	g_2DText->AddText("good luck FPS "+ std::to_string((int)(1.0f/GameTimer::getInstance()->DeltaTime())), -1.0, +1.0, 16 / 9 * 0.1);
 	
 	// Clear the back buffer - choose a colour you like
@@ -261,7 +267,7 @@ void GameManager::RenderFrame(void)
 	XMMATRIX world, projection, view;
 	world = XMMatrixIdentity();
 	projection = XMMatrixPerspectiveFovLH(XMConvertToRadians(30.0), 1920.0 / 1080.0, 0.1, 1000);
-	if (!changeCamera)
+	if (!changeCamera)// swapping which camera is displayed from 
 	{
 		view = pCamera->GetViewMatix();
 	}
@@ -276,14 +282,10 @@ void GameManager::RenderFrame(void)
 	g_directional_light_colour = XMVectorSet(g_DirectionalColours, g_DirectionalColours, g_DirectionalColours, 1.0f); 
 	g_ambient_light_colour = XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f);//dark grey - always use a small value for ambient lighting
 
-
-
-
 	m_LevelManager->passCameraPos(pCamera->getX(), pCamera->getZ());
 	m_LevelManager->update(&world, &view, &projection, &g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
 	g_pGround->setLightingValues(&g_directional_light_colour, &g_directional_light_shines_from, &g_ambient_light_colour);
 	g_pGround->update(&view, &projection);
-	//m_LevelManager->update(&world, &view, &projection);
 
 	//Change blend type to enable alphablending
 	m_pImmediateContext->OMSetBlendState(m_pAlphaBlendEnable, 0, 0xfffffff);
@@ -301,7 +303,6 @@ HRESULT GameManager::InitialiseGraphics(void)
 
 	pCamera = new camera(0.0, 0.0, -0.5, 0.0);
 	pCamera2 = new camera(0, 10, 0, 0.0);
-	
 	g_pSkybox = new skybox(m_pD3DDevice, m_pImmediateContext, pCamera);
 	hr = g_pSkybox->InitialiseGraphics();
 	if (FAILED(hr))//Return an error code if failed
@@ -340,7 +341,7 @@ HRESULT GameManager::InitialiseGraphics(void)
 	m_LevelManager->ReadFromFile("assets/level.txt");
 	m_LevelManager->setCameraPointer(pCamera);
 
-	pCamera2->rotatePitch(-90.0f);
+	pCamera2->rotatePitch(-90.0f); // set value to cause the camera to face downwards. 
 	g_cam_node->SetXPos(pCamera->getX()); //15
 	g_cam_node->SetYPos(pCamera->getY());//15
 	g_cam_node->SetZPos(pCamera->getZ());//15

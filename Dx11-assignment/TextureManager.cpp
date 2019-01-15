@@ -4,11 +4,7 @@ TextureManager * TextureManager::instance = nullptr;
 
 TextureManager:: TextureNSampler * TextureManager::getTexture(char * input, ID3D11Device * device, bool TwoTextures)
 {
-	if (TwoTextures)
-	{
-		string file1;
-		string file2;
-	}
+	// check if texture exists in map else create texture and sampler
 	if (textureMap.find(input) != textureMap.end())
 	{
 		return textureMap[input];
@@ -38,6 +34,7 @@ TextureManager:: TextureNSampler * TextureManager::getTexture(char * input, ID3D
 }
 TextureManager::TextureNSampler * TextureManager::getTexture(char * input, char * input2, ID3D11Device * device, bool TwoTextures)
 {
+	// check if texture exists in map else create texture and sampler
 	std::stringstream ss;
 	ss << input << input2;
 	string keyInput = ss.str();

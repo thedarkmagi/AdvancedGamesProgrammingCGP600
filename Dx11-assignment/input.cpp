@@ -32,8 +32,7 @@ HRESULT input::initialise()
 
 	hr = m_keyboard_device->Acquire();
 	if (FAILED(hr)) return hr;
-	//m_mouse_state = new DIMOUSESTATE();
-	//ZeroMemory(m_mouse_state, sizeof(m_mouse_device));
+
 	hr = m_direct_input->CreateDevice(GUID_SysMouse, &m_mouse_device, NULL);
 	if (FAILED(hr)) return hr;
 
@@ -79,7 +78,7 @@ float input::GetMouseX() // get left and right
 	return m_mouse_state.lX * sensitivity;
 }
 
-float input::GetMouseY()
+float input::GetMouseY() // get up and down
 {
 	return -1 *(m_mouse_state.lY * sensitivity);
 }

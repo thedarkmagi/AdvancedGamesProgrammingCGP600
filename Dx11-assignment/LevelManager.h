@@ -36,13 +36,12 @@ public:
 
 	void ReadFromFile(string input);
 	void update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection, XMVECTOR * directionLightVector, XMVECTOR * lightColour, XMVECTOR * ambientLightColour);
-	void update(XMMATRIX * world, XMMATRIX * view, XMMATRIX * projection);
-
 	void passCameraPos(float x, float z);
 	void setCameraPointer(camera* cam);
 private:
 	vector<string> list;
 	vector<SceneNode*> nodeHierarchy;
+	vector<SceneNode*> enemyHierarchy;
 	vector<GameObject*> gameObjectList;
 	SceneNode* m_rootNode;
 	SceneNode* m_camNode;
