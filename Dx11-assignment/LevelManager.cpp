@@ -58,7 +58,6 @@ void LevelManager::ReadFromFile(string input)
 						m_rootNode->addChildNode(tempNode);
 						tempNode->SetXPos(i * 2 - 5);
 						tempNode->SetZPos(j * 2 - 5);
-
 						break;
 					case 'e':
 						temp = new GameObject(m_pD3DDevice, m_pImmediateContext);
